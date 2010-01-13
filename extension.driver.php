@@ -20,6 +20,11 @@
 					'page'		=> '/frontend/',
 					'delegate'	=> 'FrontendPrePageResolve',
 					'callback'	=> 'frontendPrePageResolve'
+				),
+				array(
+					'page'		=> '/system/preferences/',
+					'delegate'	=> 'AddCustomPreferenceFieldsetsa,
+					'callback''	=> 'addCustomPreferenceFieldsets'
 				)
 			);
 		}
@@ -27,6 +32,19 @@
 		public function getRoutes() {
             return $this->_Parent->Configuration->get('router');
         }
+
+		public function addCustomPreferenceFieldsets($context){
+ 
+			$fieldset = new XMLElement('fieldset');
+			$fieldset->setAttribute('class', 'settings');
+			$fieldset->appendChild(new XMLElement('legend', 'URL Schema Manipulation'));
+ 
+			$p = new XMLElement('p', 'Define triggers and rules for runtime manipulation of the URL schema values.');
+			$p->setAttribute('class', 'help');
+			$fieldset->appendChild($p);
+	
+			$context['wrapper']->appendChild($fieldset);	
+		}
 
 		public function frontendPrePageResolve($context) {
 			$routes = $this->getRoutes();
