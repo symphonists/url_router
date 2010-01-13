@@ -23,7 +23,7 @@
 				),
 				array(
 					'page'		=> '/system/preferences/',
-					'delegate'	=> 'AddCustomPreferenceFieldsetsa,
+					'delegate'	=> 'AddCustomPreferenceFieldsets',
 					'callback'	=> 'addCustomPreferenceFieldsets'
 				)
 			);
