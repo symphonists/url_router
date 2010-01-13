@@ -29,34 +29,16 @@
         }
 
 		public function frontendPrePageResolve($context) {
-			//$page = $context['parent']->Page;
-			/*echo "<pre>";
-			print_r($context);		
-			echo "</pre>";*/
-			/*$rules = array(
-				array(
-					"from" => "/\/vanity\/(.*?)/i",
-					"to" => "/article/clean-up-your-feed-list/$1"
-				)
-			);*/
 			$routes = $this->getRoutes();
 			$rules = $routes['routes'];
-			#var_dump($rules);
 			$url = $context['page'];
-			#echo "URL IS #$url#";
-			#echo "<br />";
 			$matches = array();
 			foreach($rules as $rule) {
-				#echo "RULE IS #{$rule['from']}#";
-				#echo "<br />";
 				if(preg_match($rule['from'], $url, &$matches) == 1) {
-					#echo "got here";
 					$new_url = preg_replace($rule['from'], $rule['to'], $url);
 				}
 			}
-			#echo "NEW URL IS #$new_url#";
 			if($new_url) $context['page'] = $new_url;
-			//if($context['page'] == "/vanity/") $context['page'] = "/article/clean-up-your-feed-list";
 		}
 			
 	}
