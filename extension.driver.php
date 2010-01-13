@@ -37,12 +37,38 @@
  
 			$fieldset = new XMLElement('fieldset');
 			$fieldset->setAttribute('class', 'settings');
-			$fieldset->appendChild(new XMLElement('legend', 'URL Schema Manipulation'));
+			$fieldset->appendChild(new XMLElement('legend', 'Regex URL re-routing'));
  
-			$p = new XMLElement('p', 'Define triggers and rules for runtime manipulation of the URL schema values.');
+			$p = new XMLElement('p', 'Define regex rules for URL re-routing');
 			$p->setAttribute('class', 'help');
 			$fieldset->appendChild($p);
-	
+
+			$group = new XMLElement('div');
+			$group->setAttribute('class', 'subsection');
+			$group->appendChild(new XMLElement('h3', __('URL Schema Rules')));
+ 
+			$ol = new XMLElement('ol');
+			if($router = $this->_Parent->Configuration->get('router')) {
+				if(isset($router['routes']) && !empty($router['routes'])) {
+					$i = 1;
+					foreach($router['routes'] as $route) {
+						$li = new XMLElement('li');
+						$div = new XMLElement('div');
+						$div->setAttribute('class', 'group');
+						$labelfrom = Widget::Label(__('From'));
+						$labelfrom->appendChild(Widget::Input("fields[route][$i][from]", General::sanitize($route['from'])));
+						$labelto = Widget::Label(__('To'));
+						$labelto->appendChild(Widget::Input("fields[route][$i][to]", General::sanitize($route['to'])));
+						$div->appendChild($labelfrom);
+						$div->appendchild($labelto);
+						$li->appendChild($div);
+						$ol->appendChild($li);
+						$i++;
+					}
+				}
+			}
+			$group->appendChild($ol);
+			$fieldset->appendChild($group);
 			$context['wrapper']->appendChild($fieldset);	
 		}
 
