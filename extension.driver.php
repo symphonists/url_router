@@ -25,7 +25,7 @@
 		}
 
 		public function getRoutes() {
-            return $this->_Parent->Configuration->get('routing');
+            return $this->_Parent->Configuration->get('router');
         }
 
 		public function frontendPrePageResolve($context) {
