@@ -1,7 +1,7 @@
 <?php
 
 	Class Extension_Router extends Extension{
-	
+
 		public function about() {
 			return array('name' => 'URL Router',
 						 'version' => '0.1',
@@ -12,6 +12,21 @@
 							'description'   => 'Allows URL routing for vanity URLs etc'
 				 		);
 		}
+
+		public function install() {
+            $this->_Parent->Database->query("
+                    CREATE TABLE IF NOT EXISTS `tbl_router` (
+                        `id` int(11) NOT NULL auto_increment,
+                        `from` varchar(255) NOT NULL,
+                        `to` varchar(255) NOT NULL,
+                        PRIMARY KEY (`id`)
+                    )
+            ");
+        }
+
+        public function uninstall() {
+            $this->_Parent->Database->query("DROP TABLE 'tbl_router'");
+        }
 
 		
 		public function getSubscribedDelegates() {
@@ -40,20 +55,11 @@
 		}
 
 		public function getRoutes() {
-			#phpinfo();
-           	$router = $this->_Parent->Configuration->get('router');
-			#var_dump($router);
-			#var_dump($router);	
-			#var_dump(json_decode($router['routes'], true));
-			return json_decode(stripslashes($router['routes']), true);
-			#return $router['routes'];
+			$routes = $this->_Parent->Database->fetch("SELECT * FROM sym_router");
+			return $routes;
         }
 
 		public function save($context) {
-			#echo "<pre>";
-			#print_r($context['settings']);
-			#echo "</pre>";
-
 			$routes = array();
 			$route = array();
 			foreach($context['settings']['router']['routes'] as $item) {
@@ -65,16 +71,9 @@
 					$route = array();
 				}
 			}
-			$routedata = json_encode($routes);
-			#echo "<pre>";
-			#print_r($routes);
-			#echo "</pre>";
-	
-			#$this->_Parent->Configuration->setArray($router);
-			$context['settings']['router']['routes'] = $routedata;
-			#echo "<pre>";
-            #print_r($context['settings']);
-            #echo "</pre>";
+
+			$this->_Parent->Database->query("DELETE FROM tbl_router");
+			$this->_Parent->Database->insert($routes, "tbl_router");			
 		}	
 
 		public function initaliseAdminPageHead($context) {
@@ -148,12 +147,11 @@
 
 		public function frontendPrePageResolve($context) {
 			$routes = $this->getRoutes();
-			$rules = $routes['routes'];
 			$url = $context['page'];
 			$matches = array();
-			foreach($rules as $rule) {
-				if(preg_match($rule['from'], $url, &$matches) == 1) {
-					$new_url = preg_replace($rule['from'], $rule['to'], $url);
+			foreach($routes as $route) {
+				if(preg_match($route['from'], $url, &$matches) == 1) {
+					$new_url = preg_replace($route['from'], $route['to'], $url);
 				}
 			}
 			if($new_url) $context['page'] = $new_url;
