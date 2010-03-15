@@ -17,9 +17,11 @@ Requirements: Symphony 2.0.7
 
 ### Changelog ###
 
-0.2 ([Max Wheeler](http://makenosound.com))
-- Only add `router.js` to the `/system/preferences/` page (was breaking other JS)
-- Updated README with correct installation details
+0.2 ([Max Wheeler](http://makenosound.com)):
 
-0.1  
-- Initial release, brief documentation forthcoming.
+* Only add `router.js` to the `/system/preferences/` page (was breaking other JS)
+* Updated README with correct installation details
+
+0.1:
+
+* Initial release, brief documentation forthcoming.
