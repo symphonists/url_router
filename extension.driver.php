@@ -4,8 +4,8 @@
 
 		public function about() {
 			return array('name' => 'URL Router',
-						 'version' => '0.1',
-						 'release-date' => '2010-01-12',
+						 'version' => '0.2',
+						 'release-date' => '2010-03-15',
 						 'author' => array('name' => 'Robert Philp',
 										   'website' => 'http://robertphilp.com',
 										   'email' => ''),
@@ -78,7 +78,7 @@
 
 		public function initaliseAdminPageHead($context) {
 			$page = $context['parent']->Page;
-			$page->addScriptToHead(URL . '/extensions/router/assets/router.js', 200);
+			if ($page instanceof contentSystemPreferences) $page->addScriptToHead(URL . '/extensions/router/assets/router.js', 200);
 		}
 
 		public function addCustomPreferenceFieldsets($context){
