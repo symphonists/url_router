@@ -68,7 +68,8 @@
 			}
 
 			$this->_Parent->Database->query("DELETE FROM tbl_router");
-			$this->_Parent->Database->insert($routes, "tbl_router");			
+			$this->_Parent->Database->insert($routes, "tbl_router");
+			unset($context['settings']['router']['routes']);
 		}
 
 		public function addCustomPreferenceFieldsets($context){

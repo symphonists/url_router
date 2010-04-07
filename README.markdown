@@ -20,6 +20,7 @@ Requirements: Symphony 2.0.7
 0.3 ([Max Wheeler](http://makenosound.com)):
 
 * Remove `router.js` as it's no longer needed
+* Fix error in save logic, no longer tries to write to `config.php`
 
 0.2 ([Max Wheeler](http://makenosound.com)):
 
