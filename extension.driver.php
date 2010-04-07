@@ -4,8 +4,8 @@
 
 		public function about() {
 			return array('name' => 'URL Router',
-						 'version' => '0.2',
-						 'release-date' => '2010-03-15',
+						 'version' => '0.3',
+						 'release-date' => '2010-04-07',
 						 'author' => array('name' => 'Robert Philp',
 										   'website' => 'http://robertphilp.com',
 										   'email' => ''),
@@ -37,20 +37,15 @@
 					'callback'	=> 'frontendPrePageResolve'
 				),
 				array(
-					'page'		=> '/backend/',
-					'delegate'	=> 'InitaliseAdminPageHead',
-					'callback'	=> 'initaliseAdminPageHead'
-				),
-				array(
 					'page'		=> '/system/preferences/',
 					'delegate'	=> 'AddCustomPreferenceFieldsets',
 					'callback'	=> 'addCustomPreferenceFieldsets'
 				),
 				array(
-                    'page'      => '/system/preferences/',
-                    'delegate'  => 'Save',
-                    'callback'  => 'save'
-                ),
+					'page'      => '/system/preferences/',
+					'delegate'  => 'Save',
+					'callback'  => 'save'
+				),
 			);
 		}
 
@@ -74,11 +69,6 @@
 
 			$this->_Parent->Database->query("DELETE FROM tbl_router");
 			$this->_Parent->Database->insert($routes, "tbl_router");			
-		}	
-
-		public function initaliseAdminPageHead($context) {
-			$page = $context['parent']->Page;
-			if ($page instanceof contentSystemPreferences) $page->addScriptToHead(URL . '/extensions/router/assets/router.js', 200);
 		}
 
 		public function addCustomPreferenceFieldsets($context){
@@ -158,5 +148,3 @@
 		}
 			
 	}
-
-?>

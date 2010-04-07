@@ -1,8 +1,8 @@
 ## URL Router ##
 
-Version: 0.2  
+Version: 0.3  
 Author: [Rob Philp](robert.h.philp@gmail.com)  
-Build Date: 2010-03-15  
+Build Date: 2010-04-07  
 Requirements: Symphony 2.0.7  
 
 ### Installation ###
@@ -16,6 +16,10 @@ Requirements: Symphony 2.0.7
 ### Notes ###
 
 ### Changelog ###
+
+0.3 ([Max Wheeler](http://makenosound.com)):
+
+* Remove `router.js` as it's no longer needed
 
 0.2 ([Max Wheeler](http://makenosound.com)):
 
