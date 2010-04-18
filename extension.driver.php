@@ -143,6 +143,7 @@
 			foreach($routes as $route) {
 				if(preg_match($route['from'], $url, &$matches) == 1) {
 					$new_url = preg_replace($route['from'], $route['to'], $url);
+					break;
 				}
 			}
 			if($new_url) $context['page'] = $new_url;
