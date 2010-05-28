@@ -25,7 +25,7 @@
         }
 
         public function uninstall() {
-            $this->_Parent->Database->query("DROP TABLE 'tbl_router'");
+            $this->_Parent->Database->query("DROP TABLE `tbl_router`");
         }
 
 		
