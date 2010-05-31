@@ -70,6 +70,12 @@
 			$this->_Parent->Database->query("DELETE FROM tbl_router");
 			$this->_Parent->Database->insert($routes, "tbl_router");
 			unset($context['settings']['router']['routes']);
+			
+			if(!is_array($context['settings'])) $context['settings'] = array('router' => array('redirect' => 'no'));
+			
+			elseif(!isset($context['settings']['router']['redirect'])){
+				$context['settings']['router'] = array('redirect' => 'no');
+			}
 		}
 
 		public function addCustomPreferenceFieldsets($context){
@@ -132,6 +138,15 @@
 				}
 			}
 			$group->appendChild($ol);
+			
+			$label = Widget::Label();
+			$input = Widget::Input('settings[router][redirect]', 'yes', 'checkbox');
+			if($this->_Parent->Configuration->get('redirect', 'router') == 'yes') $input->setAttribute('checked', 'checked');
+			$label->setValue($input->generate() . ' ' . __('Redirect legacy URLs to new destination'));
+			$fieldset->appendChild($label);
+			
+			$fieldset->appendChild(new XMLElement('p', __('Redirects requests to the new destination instead of just displaying the content under the legacy URL.'), array('class' => 'help')));
+			
 			$fieldset->appendChild($group);
 			$context['wrapper']->appendChild($fieldset);	
 		}
@@ -143,6 +158,10 @@
 			foreach($routes as $route) {
 				if(preg_match($route['from'], $url, &$matches) == 1) {
 					$new_url = preg_replace($route['from'], $route['to'], $url);
+					if($this->_Parent->Configuration->get('redirect', 'router') == 'yes') {
+						header("Location:" . $new_url);
+						die();
+					}
 					break;
 				}
 			}
