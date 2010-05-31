@@ -50,7 +50,7 @@
 		}
 
 		public function getRoutes() {
-			$routes = $this->_Parent->Database->fetch("SELECT * FROM sym_router");
+			$routes = $this->_Parent->Database->fetch("SELECT * FROM tbl_router");
 			return $routes;
         }
 
