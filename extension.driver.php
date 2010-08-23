@@ -56,20 +56,26 @@
 
 		public function save($context) {
 			$routes = array();
-			$route = array();
-			foreach($context['settings']['router']['routes'] as $item) {
-				if(isset($item['from'])) {
-					$route['from'] = $item['from'];
-				} else if(isset($item['to'])) {
-					$route['to'] = $item['to'];
-					$routes[] = $route;
-					$route = array();
+
+			if ($context['settings']['router']['routes']) {
+				$route = array();
+				foreach($context['settings']['router']['routes'] as $item) {
+					if(isset($item['from'])) {
+						$route['from'] = $item['from'];
+					} else if(isset($item['to'])) {
+						$route['to'] = $item['to'];
+						$routes[] = $route;
+						$route = array();
+					}
 				}
 			}
 
 			$this->_Parent->Database->query("DELETE FROM tbl_router");
-			$this->_Parent->Database->insert($routes, "tbl_router");
-			unset($context['settings']['router']['routes']);
+
+			if (count($routes) != 0) {
+				$this->_Parent->Database->insert($routes, "tbl_router");
+				unset($context['settings']['router']['routes']);
+			}
 			
 			if(!is_array($context['settings'])) $context['settings'] = array('router' => array('redirect' => 'no'));
 			
@@ -154,9 +160,8 @@
 		public function frontendPrePageResolve($context) {
 			$routes = $this->getRoutes();
 			$url = $context['page'];
-			$matches = array();
 			foreach($routes as $route) {
-				if(preg_match($route['from'], $url, &$matches) == 1) {
+				if(preg_match($route['from'], $url, $matches) == 1) {
 					$new_url = preg_replace($route['from'], $route['to'], $url);
 					if($this->_Parent->Configuration->get('redirect', 'router') == 'yes') {
 						header("Location:" . $new_url);
