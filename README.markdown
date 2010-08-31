@@ -1,8 +1,8 @@
 ## URL Router ##
 
-Version: 0.3  
+Version: 0.4
 Author: [Rob Philp](robert.h.philp@gmail.com)  
-Build Date: 2010-04-07  
+Build Date: 2010-08-31  
 Requirements: Symphony 2.0.7  
 
 ### Installation ###
@@ -16,6 +16,10 @@ Requirements: Symphony 2.0.7
 ### Notes ###
 
 ### Changelog ###
+
+0.4:
+
+* Applied patches from pull requests to fix various issues including save failure when no redirects entered and pass-by-reference warning
 
 0.3 ([Max Wheeler](http://makenosound.com)):
 
