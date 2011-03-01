@@ -4,7 +4,7 @@
 
 		public function about() {
 			return array('name' => 'URL Router',
-						 'version' => '0.3',
+						 'version' => '0.5',
 						 'release-date' => '2010-04-07',
 						 'author' => array('name' => 'Robert Philp',
 										   'website' => 'http://robertphilp.com',
