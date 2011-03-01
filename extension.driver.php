@@ -55,14 +55,16 @@
         }
 
 		public function save($context) {
+			//var_dump($context['settings']['router']['routes']);die;
 			$routes = array();
 
 			if ($context['settings']['router']['routes']) {
 				$route = array();
 				foreach($context['settings']['router']['routes'] as $item) {
-					if(isset($item['from'])) {
+					if(isset($item['from']) && !empty($item['from'])) {
 						$route['from'] = $item['from'];
-					} else if(isset($item['to'])) {
+					}
+					if(isset($item['to']) && !empty($item['to'])) {
 						$route['to'] = $item['to'];
 						$routes[] = $route;
 						$route = array();
@@ -92,21 +94,35 @@
 			$p = new XMLElement('p', 'Define regex rules for URL re-routing');
 			$p->setAttribute('class', 'help');
 			$fieldset->appendChild($p);
-
+/*
+			$p = new XMLElement('p', 'Example');
+			$fieldset->appendChild($p);
+			$p = new XMLElement('p', 'From: /\/vanity\/(.*?)/i to: /article/my-long-url/$1');
+			$fieldset->appendChild($p);
+			$p = new XMLElement('p', 'Will map: /vanity/page/2 to: /article/my-long-url/page/2');
+			$fieldset->appendChild($p);
+*/
 			$group = new XMLElement('div');
-			$group->setAttribute('class', 'subsection');
-			$group->appendChild(new XMLElement('h3', __('URL Schema Rules')));
+			$title = new XMLElement('p', __('URL Schema Rules'));
+			$title->setAttribute('class', 'label');
+			$group->appendChild($title);
 
 			$ol = new XMLElement('ol');
-			$ol->setAttribute('id', 'router');
+			$ol->setAttribute('id', 'duplicator');
+			$ol->setAttribute('class', 'duplicator');
+
 			$li = new XMLElement('li');
-			$li->setAttribute('class', 'template');
-			$labelfrom = Widget::Label(__('From'));
-           	$labelfrom->appendChild(Widget::Input("settings[router][routes][][from]", "From"));
-            $labelto = Widget::Label(__('To'));
-            $labelto->appendChild(Widget::Input("settings[router][routes][][to]", "To"));
+			$li->setAttribute('class', 'instance');
+			$h4 = new XMLElement('h3', 'Route');
+			$h4->setAttribute('class', 'header');
+			$li->appendChild($h4);
+
 			$divgroup = new XMLElement('div');
 			$divgroup->setAttribute('class', 'group');
+			$labelfrom = Widget::Label(__('From'));
+           	$labelfrom->appendChild(Widget::Input("settings[router][routes][][from]"));
+            $labelto = Widget::Label(__('To'));
+            $labelto->appendChild(Widget::Input("settings[router][routes][][to]"));
 			$divgroup->appendChild($labelfrom);
 			$divgroup->appendChild($labelto);
 
@@ -114,7 +130,6 @@
 			$divcontent->setAttribute('class', 'content');
 			$divcontent->appendChild($divgroup);
 
-			$li->appendChild(new XMLElement('h4', "Route"));
 			$li->appendChild($divcontent);
 			$ol->appendChild($li);
 			if($routes = $this->getRoutes()) {
@@ -122,10 +137,11 @@
 					$i = 1;
 					foreach($routes as $route) {
 						$li = new XMLElement('li');
-						$li->setAttribute('class', 'instance expanded');
+						$li->setAttribute('class', 'instance');
 						$h4 = new XMLElement('h4', 'Route');
-						//$h4->appendChild(new XMLElement('span', 'Route'));
+						$h4->setAttribute('class', 'header');
 						$li->appendChild($h4);
+
 						$divcontent = new XMLElement('div');
 						$divcontent->setAttribute('class', 'content');
 						$divgroup = new XMLElement('div');
@@ -136,9 +152,11 @@
 						$labelto->appendChild(Widget::Input("settings[router][routes][][to]", General::sanitize($route['to'])));
 						$divgroup->appendChild($labelfrom);
 						$divgroup->appendChild($labelto);
+
 						$divcontent->appendChild($divgroup);
 						$li->appendChild($divcontent);
 						$ol->appendChild($li);
+
 						$i++;
 					}
 				}
