@@ -14,7 +14,7 @@
 		}
 
 		public function install() {
-            $this->_Parent->Database->query("
+            Symphony::Database()->query("
                     CREATE TABLE IF NOT EXISTS `tbl_router` (
                         `id` int(11) NOT NULL auto_increment,
                         `from` varchar(255) NOT NULL,
@@ -25,10 +25,10 @@
         }
 
         public function uninstall() {
-            $this->_Parent->Database->query("DROP TABLE `tbl_router`");
+            Symphony::Database()->query("DROP TABLE `tbl_router`");
         }
 
-		
+
 		public function getSubscribedDelegates() {
 			return array(
 				array(
@@ -50,7 +50,7 @@
 		}
 
 		public function getRoutes() {
-			$routes = $this->_Parent->Database->fetch("SELECT * FROM tbl_router");
+			$routes = Symphony::Database()->fetch("SELECT * FROM tbl_router");
 			return $routes;
         }
 
@@ -70,15 +70,15 @@
 				}
 			}
 
-			$this->_Parent->Database->query("DELETE FROM tbl_router");
+			Symphony::Database()->query("DELETE FROM tbl_router");
 
 			if (count($routes) != 0) {
-				$this->_Parent->Database->insert($routes, "tbl_router");
+				Symphony::Database()->insert($routes, "tbl_router");
 				unset($context['settings']['router']['routes']);
 			}
-			
+
 			if(!is_array($context['settings'])) $context['settings'] = array('router' => array('redirect' => 'no'));
-			
+
 			elseif(!isset($context['settings']['router']['redirect'])){
 				$context['settings']['router'] = array('redirect' => 'no');
 			}
@@ -88,7 +88,7 @@
 			$fieldset = new XMLElement('fieldset');
 			$fieldset->setAttribute('class', 'settings');
 			$fieldset->appendChild(new XMLElement('legend', 'Regex URL re-routing'));
- 
+
 			$p = new XMLElement('p', 'Define regex rules for URL re-routing');
 			$p->setAttribute('class', 'help');
 			$fieldset->appendChild($p);
@@ -96,7 +96,7 @@
 			$group = new XMLElement('div');
 			$group->setAttribute('class', 'subsection');
 			$group->appendChild(new XMLElement('h3', __('URL Schema Rules')));
- 
+
 			$ol = new XMLElement('ol');
 			$ol->setAttribute('id', 'router');
 			$li = new XMLElement('li');
@@ -109,10 +109,10 @@
 			$divgroup->setAttribute('class', 'group');
 			$divgroup->appendChild($labelfrom);
 			$divgroup->appendChild($labelto);
-	
+
 			$divcontent = new XMLElement('div');
 			$divcontent->setAttribute('class', 'content');
-			$divcontent->appendChild($divgroup);			
+			$divcontent->appendChild($divgroup);
 
 			$li->appendChild(new XMLElement('h4', "Route"));
 			$li->appendChild($divcontent);
@@ -144,17 +144,17 @@
 				}
 			}
 			$group->appendChild($ol);
-			
+
 			$label = Widget::Label();
 			$input = Widget::Input('settings[router][redirect]', 'yes', 'checkbox');
 			if($this->_Parent->Configuration->get('redirect', 'router') == 'yes') $input->setAttribute('checked', 'checked');
 			$label->setValue($input->generate() . ' ' . __('Redirect legacy URLs to new destination'));
 			$fieldset->appendChild($label);
-			
+
 			$fieldset->appendChild(new XMLElement('p', __('Redirects requests to the new destination instead of just displaying the content under the legacy URL.'), array('class' => 'help')));
-			
+
 			$fieldset->appendChild($group);
-			$context['wrapper']->appendChild($fieldset);	
+			$context['wrapper']->appendChild($fieldset);
 		}
 
 		public function frontendPrePageResolve($context) {
@@ -163,7 +163,7 @@
 			foreach($routes as $route) {
 				if(preg_match($route['from'], $url, $matches) == 1) {
 					$new_url = preg_replace($route['from'], $route['to'], $url);
-					if($this->_Parent->Configuration->get('redirect', 'router') == 'yes') {
+					if(Symphony::Configuration()->get('redirect', 'router') == 'yes') {
 						header("Location:" . $new_url);
 						die();
 					}
@@ -172,5 +172,5 @@
 			}
 			if($new_url) $context['page'] = $new_url;
 		}
-			
+
 	}

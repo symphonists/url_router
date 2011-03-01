@@ -1,9 +1,9 @@
 ## URL Router ##
 
-Version: 0.4
-Author: [Rob Philp](robert.h.philp@gmail.com)  
-Build Date: 2010-08-31  
-Requirements: Symphony 2.0.7  
+Version: 0.5
+Author: [Rob Philp](robert.h.philp@gmail.com)
+Build Date: 2010-08-31
+Requirements: Symphony 2.0.7
 
 ### Installation ###
 
@@ -17,7 +17,11 @@ Requirements: Symphony 2.0.7
 
 ### Changelog ###
 
-0.4:
+0.5:
+
+* Symphony 2.2 compatiability update
+
+0.4 ([John Porter](http://designermonkey.co.uk)):
 
 * Applied patches from pull requests to fix various issues including save failure when no redirects entered and pass-by-reference warning
 
