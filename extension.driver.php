@@ -46,6 +46,11 @@
 					'delegate'  => 'Save',
 					'callback'  => 'save'
 				),
+				array(
+						'page' => '/backend/',
+						'delegate' => 'InitaliseAdminPageHead',
+						'callback' => 'addRouterJS'
+				)
 			);
 		}
 
@@ -91,34 +96,26 @@
 			$fieldset->setAttribute('class', 'settings');
 			$fieldset->appendChild(new XMLElement('legend', 'Regex URL re-routing'));
 
-			$p = new XMLElement('p', 'Define regex rules for URL re-routing');
-			$p->setAttribute('class', 'help');
+			$p = new XMLElement('p', 'Define regex rules for URL re-routing', array('class', 'help'));
 			$fieldset->appendChild($p);
-/*
-			$p = new XMLElement('p', 'Example');
-			$fieldset->appendChild($p);
-			$p = new XMLElement('p', 'From: /\/vanity\/(.*?)/i to: /article/my-long-url/$1');
-			$fieldset->appendChild($p);
-			$p = new XMLElement('p', 'Will map: /vanity/page/2 to: /article/my-long-url/page/2');
-			$fieldset->appendChild($p);
-*/
+
 			$group = new XMLElement('div');
-			$title = new XMLElement('p', __('URL Schema Rules'));
-			$title->setAttribute('class', 'label');
-			$group->appendChild($title);
+			$group->setAttribute('class', 'subsection');
+			$group->appendChild(new XMLElement('p', __('URL Schema Rules'), array('class' => 'label')));
 
 			$ol = new XMLElement('ol');
-			$ol->setAttribute('id', 'duplicator');
-			$ol->setAttribute('class', 'duplicator');
+			$ol->setAttribute('id', 'router-duplicator');
+			$ol->setAttribute('class', 'orderable duplicator collapsible');
 
 			$li = new XMLElement('li');
-			$li->setAttribute('class', 'instance');
-			$h4 = new XMLElement('h3', 'Route');
+			$li->setAttribute('class', 'template');
+			$h4 = new XMLElement('h4', 'Route');
 			$h4->setAttribute('class', 'header');
 			$li->appendChild($h4);
 
 			$divgroup = new XMLElement('div');
 			$divgroup->setAttribute('class', 'group');
+
 			$labelfrom = Widget::Label(__('From'));
            	$labelfrom->appendChild(Widget::Input("settings[router][routes][][from]"));
             $labelto = Widget::Label(__('To'));
@@ -137,15 +134,17 @@
 					$i = 1;
 					foreach($routes as $route) {
 						$li = new XMLElement('li');
-						$li->setAttribute('class', 'instance');
+						$li->setAttribute('class', 'instance expanded');
 						$h4 = new XMLElement('h4', 'Route');
 						$h4->setAttribute('class', 'header');
 						$li->appendChild($h4);
 
 						$divcontent = new XMLElement('div');
 						$divcontent->setAttribute('class', 'content');
+
 						$divgroup = new XMLElement('div');
 						$divgroup->setAttribute('class', 'group');
+						
 						$labelfrom = Widget::Label(__('From'));
 						$labelfrom->appendChild(Widget::Input("settings[router][routes][][from]", General::sanitize($route['from'])));
 						$labelto = Widget::Label(__('To'));
@@ -191,4 +190,10 @@
 			if($new_url) $context['page'] = $new_url;
 		}
 
+		# Add preferences.js to <head>
+		public function addRouterJS() {
+			if(file_exists(EXTENSIONS . '/router/assets/preferences.js')) {
+				Administration::instance()->Page->addScriptToHead(URL . '/extensions/router/assets/preferences.js', 400, false);
+			}
+		}
 	}
