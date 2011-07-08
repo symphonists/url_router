@@ -1,33 +1,44 @@
 <?php
 
-	Class Extension_Router extends Extension{
+	Class Extension_Url_Router extends Extension{
 
 		public function about() {
 			return array('name' => 'URL Router',
-						 'version' => '0.5',
-						 'release-date' => '2010-04-07',
-						 'author' => array('name' => 'Robert Philp',
-										   'website' => 'http://robertphilp.com',
-										   'email' => ''),
-							'description'   => 'Allows URL routing for vanity URLs etc'
-				 		);
+				'version' => '1.0',
+				'release-date' => '2010-04-07',
+				'author' => array(
+					'name' => 'Symphony Team',
+					'website' => 'http://symphony-cms.com',
+				),
+				'description'   => 'Allows Regular Expression URL routing in Symphony.'
+			);
 		}
 
 		public function install() {
-            Symphony::Database()->query("
-                    CREATE TABLE IF NOT EXISTS `tbl_router` (
-                        `id` int(11) NOT NULL auto_increment,
-                        `from` varchar(255) NOT NULL,
-                        `to` varchar(255) NOT NULL,
-                        PRIMARY KEY (`id`)
-                    )
-            ");
+			Symphony::Database()->query("
+					CREATE TABLE IF NOT EXISTS `tbl_router` (
+						`id` int(11) NOT NULL auto_increment,
+						`from` varchar(255) NOT NULL,
+						`to` varchar(255) NOT NULL,
+						PRIMARY KEY (`id`)
+					)
+			");
+			Symphony::Database()->query("RENAME TABLE `tbl_router` TO `tbl_url_router`");
+
         }
+
+		public function update($previousVersion){
+
+			if(version_compare($previousVersion, '1.0', '<')){
+				Symphony::Database()->query("
+					RENAME TABLE `tbl_router` TO `tbl_url_router`
+				");
+			}
+		}
 
         public function uninstall() {
-            Symphony::Database()->query("DROP TABLE `tbl_router`");
+            Symphony::Database()->query("DROP TABLE `tbl_url_router`");
         }
-
 
 		public function getSubscribedDelegates() {
 			return array(
@@ -49,7 +60,7 @@
 				array(
 						'page' => '/backend/',
 						'delegate' => 'InitaliseAdminPageHead',
-						'callback' => 'addRouterJS'
+						'callback' => 'initaliseAdminPageHead'
 				)
 			);
 		}
@@ -60,12 +71,12 @@
         }
 
 		public function save($context) {
-			//var_dump($context['settings']['router']['routes']);die;
+
 			$routes = array();
 
-			if ($context['settings']['router']['routes']) {
+			if ($context['settings']['url-router']['routes']) {
 				$route = array();
-				foreach($context['settings']['router']['routes'] as $item) {
+				foreach($context['settings']['url-router']['routes'] as $item) {
 					if(isset($item['from']) && !empty($item['from'])) {
 						$route['from'] = $item['from'];
 					}
@@ -77,34 +88,34 @@
 				}
 			}
 
-			Symphony::Database()->query("DELETE FROM tbl_router");
+			Symphony::Database()->query("DELETE FROM tbl_url_router");
 
 			if (count($routes) != 0) {
-				Symphony::Database()->insert($routes, "tbl_router");
-				unset($context['settings']['router']['routes']);
+				Symphony::Database()->insert($routes, "tbl_url_router");
+				unset($context['settings']['url-router']['routes']);
 			}
 
-			if(!is_array($context['settings'])) $context['settings'] = array('router' => array('redirect' => 'no'));
+			if(!is_array($context['settings'])) $context['settings'] = array('url-router' => array('redirect' => 'no'));
 
-			elseif(!isset($context['settings']['router']['redirect'])){
-				$context['settings']['router'] = array('redirect' => 'no');
+			elseif(!isset($context['settings']['url-router']['redirect'])){
+				$context['settings']['url-router'] = array('redirect' => 'no');
 			}
 		}
 
 		public function addCustomPreferenceFieldsets($context){
 			$fieldset = new XMLElement('fieldset');
 			$fieldset->setAttribute('class', 'settings');
-			$fieldset->appendChild(new XMLElement('legend', 'Regex URL re-routing'));
+			$fieldset->appendChild(new XMLElement('legend', 'URL Router'));
 
-			$p = new XMLElement('p', 'Define regex rules for URL re-routing', array('class', 'help'));
+			$p = new XMLElement('p', 'Define regular expression rules for URL routing', array('class', 'help'));
 			$fieldset->appendChild($p);
 
 			$group = new XMLElement('div');
 			$group->setAttribute('class', 'subsection');
-			$group->appendChild(new XMLElement('p', __('URL Schema Rules'), array('class' => 'label')));
+			$group->appendChild(new XMLElement('p', __('Rules'), array('class' => 'label')));
 
 			$ol = new XMLElement('ol');
-			$ol->setAttribute('id', 'router-duplicator');
+			$ol->setAttribute('id', 'url-router-duplicator');
 			$ol->setAttribute('class', 'orderable duplicator collapsible');
 
 			$li = new XMLElement('li');
@@ -117,9 +128,9 @@
 			$divgroup->setAttribute('class', 'group');
 
 			$labelfrom = Widget::Label(__('From'));
-           	$labelfrom->appendChild(Widget::Input("settings[router][routes][][from]"));
+           	$labelfrom->appendChild(Widget::Input("settings[url-router][routes][][from]"));
             $labelto = Widget::Label(__('To'));
-            $labelto->appendChild(Widget::Input("settings[router][routes][][to]"));
+            $labelto->appendChild(Widget::Input("settings[url-router][routes][][to]"));
 			$divgroup->appendChild($labelfrom);
 			$divgroup->appendChild($labelto);
 
@@ -144,11 +155,11 @@
 
 						$divgroup = new XMLElement('div');
 						$divgroup->setAttribute('class', 'group');
-						
+
 						$labelfrom = Widget::Label(__('From'));
-						$labelfrom->appendChild(Widget::Input("settings[router][routes][][from]", General::sanitize($route['from'])));
+						$labelfrom->appendChild(Widget::Input("settings[url-router][routes][][from]", General::sanitize($route['from'])));
 						$labelto = Widget::Label(__('To'));
-						$labelto->appendChild(Widget::Input("settings[router][routes][][to]", General::sanitize($route['to'])));
+						$labelto->appendChild(Widget::Input("settings[url-router][routes][][to]", General::sanitize($route['to'])));
 						$divgroup->appendChild($labelfrom);
 						$divgroup->appendChild($labelto);
 
@@ -163,8 +174,8 @@
 			$group->appendChild($ol);
 
 			$label = Widget::Label();
-			$input = Widget::Input('settings[router][redirect]', 'yes', 'checkbox');
-			if($this->_Parent->Configuration->get('redirect', 'router') == 'yes') $input->setAttribute('checked', 'checked');
+			$input = Widget::Input('settings[url-router][redirect]', 'yes', 'checkbox');
+			if(Symphony::Configuration()->get('redirect', 'router') == 'yes') $input->setAttribute('checked', 'checked');
 			$label->setValue($input->generate() . ' ' . __('Redirect legacy URLs to new destination'));
 			$fieldset->appendChild($label);
 
@@ -180,7 +191,7 @@
 			foreach($routes as $route) {
 				if(preg_match($route['from'], $url, $matches) == 1) {
 					$new_url = preg_replace($route['from'], $route['to'], $url);
-					if(Symphony::Configuration()->get('redirect', 'router') == 'yes') {
+					if(Symphony::Configuration()->get('redirect', 'url-router') == 'yes') {
 						header("Location:" . $new_url);
 						die();
 					}
@@ -190,10 +201,10 @@
 			if($new_url) $context['page'] = $new_url;
 		}
 
-		# Add preferences.js to <head>
-		public function addRouterJS() {
-			if(file_exists(EXTENSIONS . '/router/assets/preferences.js')) {
-				Administration::instance()->Page->addScriptToHead(URL . '/extensions/router/assets/preferences.js', 400, false);
+		public function initaliseAdminPageHead() {
+			$page = $context['parent']->Page;
+			if($page instanceof contentSystemPreferences){
+				$page->addScriptToHead(URL . '/extensions/url_router/assets/url-router.preferences.js', 400, false);
 			}
 		}
 	}

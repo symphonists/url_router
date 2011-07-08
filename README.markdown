@@ -1,13 +1,18 @@
 ## URL Router ##
 
-Version: 0.5
-Author: [Rob Philp](robert.h.philp@gmail.com)
-Build Date: 2010-08-31
-Requirements: Symphony 2.0.7
+Version: 1.0
+
+Author: [Symphony Team]
+
+Build Date: 2011-07-08
+
+Requirements: Symphony 2.2
 
 ### Installation ###
 
-1. Upload the files into a folder named "router" in your Symphony 'extensions' folder.
+If the older v0.x router is installed, it must be uninstalled first. This is unfortunate, and a workaround is being searched for. Make sure you copy down your routes before doing this, and re-enter them in the new router.
+
+1. Upload the files into a folder named "url_router" in your Symphony 'extensions' folder.
 
 2. Enable it by selecting "URL Router" on the "System -> Extensions" page, choosing "Enable" from the with-selected menu, and clicking "Apply".
 
@@ -15,7 +20,15 @@ Requirements: Symphony 2.0.7
 
 ### Notes ###
 
+The upgrade to 1.0 **breaks the installation of the old version** which must be uninstalled before installing this version.
+
 ### Changelog ###
+
+1.0 ([John Porter](http://designermonkey.co.uk), [Nick Dunn](http://nick-dunn.co.uk))
+
+* Update as Symphony Team takes ownership.
+* Renamed extension class and folder to url_router.
+* Manually merged @nickdunn's changes.
 
 0.5:
 
