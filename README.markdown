@@ -1,6 +1,6 @@
 ## URL Router ##
 
-Version: 1.0
+Version: 1.0.1
 
 Author: [Symphony Team]
 
@@ -10,7 +10,6 @@ Requirements: Symphony 2.2
 
 ### Installation ###
 
-If the older v0.x router is installed, it must be uninstalled first. This is unfortunate, and a workaround is being searched for. Make sure you copy down your routes before doing this, and re-enter them in the new router.
 
 1. Upload the files into a folder named "url_router" in your Symphony 'extensions' folder.
 
@@ -18,11 +17,11 @@ If the older v0.x router is installed, it must be uninstalled first. This is unf
 
 3. Add your rules to the "System -> Preferences" page.
 
-### Notes ###
-
-The upgrade to 1.0 **breaks the installation of the old version** which must be uninstalled before installing this version.
-
 ### Changelog ###
+
+1.0.1
+
+* Bug fix to remove rogue query I forgot to remove, thanks [Vlad Ghita](https://github.com/vlad-ghita) for spotting that one
 
 1.0 ([John Porter](http://designermonkey.co.uk), [Nick Dunn](http://nick-dunn.co.uk))
 
