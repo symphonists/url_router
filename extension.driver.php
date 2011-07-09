@@ -16,25 +16,15 @@
 
 		public function install() {
 			Symphony::Database()->query("
-					CREATE TABLE IF NOT EXISTS `tbl_router` (
+					CREATE TABLE IF NOT EXISTS `tbl_url_router` (
 						`id` int(11) NOT NULL auto_increment,
 						`from` varchar(255) NOT NULL,
 						`to` varchar(255) NOT NULL,
 						PRIMARY KEY (`id`)
 					)
 			");
-			Symphony::Database()->query("RENAME TABLE `tbl_router` TO `tbl_url_router`");
 
         }
-
-		public function update($previousVersion){
-
-			if(version_compare($previousVersion, '1.0', '<')){
-				Symphony::Database()->query("
-					RENAME TABLE `tbl_router` TO `tbl_url_router`
-				");
-			}
-		}
 
         public function uninstall() {
             Symphony::Database()->query("DROP TABLE `tbl_url_router`");
