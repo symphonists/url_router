@@ -56,7 +56,7 @@
 		}
 
 		public function getRoutes() {
-			$routes = Symphony::Database()->fetch("SELECT * FROM tbl_router");
+			$routes = Symphony::Database()->fetch("SELECT * FROM tbl_url_router");
 			return $routes;
         }
 
@@ -191,10 +191,10 @@
 			if($new_url) $context['page'] = $new_url;
 		}
 
-		public function initaliseAdminPageHead() {
+		public function initaliseAdminPageHead($context) {
 			$page = $context['parent']->Page;
 			if($page instanceof contentSystemPreferences){
-				$page->addScriptToHead(URL . '/extensions/url_router/assets/url-router.preferences.js', 400, false);
+				$page->addScriptToHead(URL . '/extensions/url_router/assets/urlrouter.preferences.js', 400, false);
 			}
 		}
 	}

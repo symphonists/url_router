@@ -4,7 +4,7 @@ URL Router
 
 (function($) {
   $(document).ready(function() {
-    var duplicator = $('#router-duplicator');
+    var duplicator = $('#url-router-duplicator');
     duplicator.symphonyDuplicator({
       orderable: true,
       collapsible: true

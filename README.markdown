@@ -19,6 +19,10 @@ Requirements: Symphony 2.2
 
 ### Changelog ###
 
+1.0.2
+
+* Stupidity fixes.
+
 1.0.1
 
 * Bug fix to remove rogue query I forgot to remove, thanks [Vlad Ghita](https://github.com/vlad-ghita) for spotting that one
