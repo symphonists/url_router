@@ -5,7 +5,7 @@
 		public function about()
 		{
 			return array('name' => 'URL Router',
-				'version' => '1.1.0',
+				'version' => '1.1.1',
 				'release-date' => '2011-07-08',
 				'author' => array(
 					'name' => 'Symphony Team',
@@ -23,6 +23,7 @@
 						`from` varchar(255) NOT NULL,
 						`to` varchar(255) NOT NULL,
 						`type` enum('route','redirect') DEFAULT 'route',
+						`http301` enum('yes','no') DEFAULT 'no',
 						PRIMARY KEY (`id`)
 					)
 			");
@@ -38,9 +39,27 @@
 
 				if(!$type)
 				{
-					return Symphony::Database()->query(
-						"ALTER TABLE `tbl_url_router` ADD `type` ENUM('route','redirect') DEFAULT 'route'"
-					);
+					return Symphony::Database()->query("
+						ALTER TABLE `tbl_url_router`
+						ADD `type` ENUM('route','redirect') DEFAULT 'route',
+					");
+				}
+
+				return false;
+			}
+
+			if(version_compare($previousVersion, '1.1.1', '<'))
+			{
+				Symphony::Configuration()->remove('url-router');
+
+				$type = Symphony::Database()->fetchVar('Field', 0, "SHOW COLUMNS FROM `tbl_url_router` LIKE 'http301'");
+
+				if(!$type)
+				{
+					return Symphony::Database()->query("
+						ALTER TABLE `tbl_url_router`
+						ADD `http301` ENUM('yes','no') DEFAULT 'no'
+					");
 				}
 
 				return false;
@@ -95,6 +114,8 @@
 				{
 					if(isset($item['type']) && !empty($item['type']))
 					{
+						$route = array();
+
 						$route['type'] = $item['type'];
 					}
 					if(isset($item['from']) && !empty($item['from']))
@@ -105,7 +126,11 @@
 					{
 						$route['to'] = $item['to'];
 						$routes[] = $route;
-						$route = array();
+					}
+					if(isset($item['http301']) && !empty($item['http301']))
+					{
+						$key = count($routes) - 1;
+						$routes[$key]['http301'] = $item['http301'];
 					}
 				}
 			}
@@ -174,7 +199,17 @@
 				$divcontent->setAttribute('class', 'content');
 				$divcontent->appendChild($divgroup);
 
-				$li_re->appendChild(clone $divcontent);
+				$recontent = clone $divcontent;
+				$regroup = new XMLElement('div');
+				$regroup->setAttribute('class', 'group');
+
+				$label = Widget::Label();
+				$input = Widget::Input('settings[url-router][routes][][http301]', 'yes', 'checkbox');
+				$label->setValue($input->generate() . ' Send an HTTP 301 Redirect');
+				$regroup->appendChild($label);
+				$recontent->appendChild($regroup);
+
+				$li_re->appendChild($recontent);
 				$li_ro->appendChild($divcontent);
 
 				$ol->appendChild($li_ro);
@@ -217,6 +252,21 @@
 							$divgroup->appendChild($labelto);
 
 							$divcontent->appendChild($divgroup);
+							if($route['type'] == 'redirect')
+							{
+								$regroup = new XMLElement('div');
+								$regroup->setAttribute('class', 'group');
+
+								$label = Widget::Label();
+								$input = Widget::Input('settings[url-router][routes][][http301]', 'yes', 'checkbox');
+								if($route['http301'] == 'yes')
+								{
+									$input->setAttribute('checked', 'checked');
+								}
+								$label->setValue($input->generate() . ' Send an HTTP 301 Redirect');
+								$regroup->appendChild($label);
+								$divcontent->appendChild($regroup);
+							}
 							$li->appendChild($divcontent);
 							$ol->appendChild($li);
 						}
@@ -241,7 +291,7 @@
 		{
 			$installed = Symphony::Database()->fetchVar('version', 0, "SELECT `version` FROM `tbl_extensions` WHERE `name` = 'url_router'");
 
-			return version_compare($installed, $this->about['version'], '!=');
+			return version_compare($installed, '1.1.0', '>=');
 		}
 
 		public function frontendPrePageResolve($context)
@@ -260,7 +310,14 @@
 
 						if($route['type'] == 'redirect')
 						{
-							header("Location:" . $context['page']);
+							if($route['http301'] === 'yes')
+							{
+								header("Location:" . $context['page'], true, 301);
+							}
+							else
+							{
+								header("Location:" . $context['page']);
+							}
 							die();
 						}
 						break;
