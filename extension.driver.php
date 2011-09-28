@@ -2,10 +2,12 @@
 
 	Class Extension_Url_Router extends Extension{
 
+		private $_hasrun = false;
+
 		public function about()
 		{
 			return array('name' => 'URL Router',
-				'version' => '1.1.1',
+				'version' => '1.2',
 				'release-date' => '2011-07-08',
 				'author' => array(
 					'name' => 'Symphony Team',
@@ -97,11 +99,51 @@
 			);
 		}
 
+		/**
+		 * Get all routes
+		 *
+		 * @return Array    Array of routes from the database
+		 */
 		public function getRoutes()
 		{
 			return Symphony::Database()->fetch("SELECT * FROM tbl_url_router");
         }
 
+		/**
+		 * Get the first route that matches the given path
+		 *
+		 * @param String $path Thepath to regex match on
+		 *
+		 * @return Array    Array of matched page details
+		 * @return Boolean	False if no page matched
+		 */
+		public function getRoute($path)
+		{
+			$routes = $this->getRoutes();
+
+			$return = array();
+
+			foreach($routes as $route)
+			{
+				if(preg_match($route['from'], $path, $matches) == 1)
+				{
+					$route['routed'] = preg_replace($route['from'], $route['to'], $path);
+
+					$route['original'] = $path;
+
+					$return = $route;
+				}
+				break;
+			}
+
+			return $return;
+		}
+
+		/**
+		 * Save the routes from the preferences into the database
+		 *
+		 * @param unknown $context Symphony context
+		 */
 		public function save($context)
 		{
 			$routes = array();
@@ -185,11 +227,13 @@
 				$li_ro->appendChild($h4_ro);
 				$li_ro->appendChild($hidden_ro);
 
+			//	From To boxes
 				$divgroup = new XMLElement('div');
 				$divgroup->setAttribute('class', 'group');
-
 				$labelfrom = Widget::Label(__('From'));
 				$labelfrom->appendChild(Widget::Input("settings[url-router][routes][][from]"));
+				$labelfrom->appendChild(new XMLElement('p', 'Example: "/\/page-name\/(.+\/)/" Wrap in / and ensure to escape metacharacters with \\', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
+')));
 				$labelto = Widget::Label(__('To'));
 				$labelto->appendChild(Widget::Input("settings[url-router][routes][][to]"));
 				$divgroup->appendChild($labelfrom);
@@ -200,14 +244,22 @@
 				$divcontent->appendChild($divgroup);
 
 				$recontent = clone $divcontent;
+
 				$regroup = new XMLElement('div');
 				$regroup->setAttribute('class', 'group');
-
 				$label = Widget::Label();
 				$input = Widget::Input('settings[url-router][routes][][http301]', 'yes', 'checkbox');
 				$label->setValue($input->generate() . ' Send an HTTP 301 Redirect');
 				$regroup->appendChild($label);
 				$recontent->appendChild($regroup);
+
+				$divgroup = new XMLElement('div');
+				$divgroup->setAttribute('class', 'group');
+				$label = Widget::Label();
+				$input = Widget::Input('settings[url-router][routes][][http301]', 'yes', 'checkbox');
+				$label->setValue($input->generate() . ' Force re-route if page exists');
+				$divgroup->appendChild($label);
+				$divcontent->appendChild($divgroup);
 
 				$li_re->appendChild($recontent);
 				$li_ro->appendChild($divcontent);
@@ -246,6 +298,8 @@
 
 							$labelfrom = Widget::Label(__('From'));
 							$labelfrom->appendChild(Widget::Input("settings[url-router][routes][][from]", General::sanitize($route['from'])));
+							$labelfrom->appendChild(new XMLElement('p', 'Example: "/\/page-name\/(.+\/)/" Wrap in / and ensure to escape metacharacters with \\', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
+')));
 							$labelto = Widget::Label(__('To'));
 							$labelto->appendChild(Widget::Input("settings[url-router][routes][][to]", General::sanitize($route['to'])));
 							$divgroup->appendChild($labelfrom);
@@ -266,6 +320,21 @@
 								$label->setValue($input->generate() . ' Send an HTTP 301 Redirect');
 								$regroup->appendChild($label);
 								$divcontent->appendChild($regroup);
+							}
+							else
+							{
+								$divgroup = new XMLElement('div');
+								$divgroup->setAttribute('class', 'group');
+
+								$label = Widget::Label();
+								$input = Widget::Input('settings[url-router][routes][][http301]', 'yes', 'checkbox');
+								if($route['http301'] == 'yes')
+								{
+									$input->setAttribute('checked', 'checked');
+								}
+								$label->setValue($input->generate() . ' Force re-route if page exists');
+								$divgroup->appendChild($label);
+								$divcontent->appendChild($divgroup);
 							}
 							$li->appendChild($divcontent);
 							$ol->appendChild($li);
@@ -300,15 +369,34 @@
 
 			if($allow)
 			{
-				$routes = $this->getRoutes();
-
-				foreach($routes as $route)
+				if(!$this->_hasrun)
 				{
-					if(preg_match($route['from'], $context['page'], $matches) == 1)
-					{
-						$context['page'] = preg_replace($route['from'], $route['to'], $context['page']);
+					// Prevent an infinity loop of delegate callbacks to this function - @creativedutchmen
+					$this->_hasrun = true;
 
-						if($route['type'] == 'redirect')
+					// Used to check page resolution, would cause loop.
+					$frontend = FrontEnd::Page();
+
+					// Get route or empty array
+					$route = $this->getRoute($context['page']);
+
+					// Check whether the current page resolves as it is
+					$page_can_resolve = $frontend->resolvePage($context['page']);
+
+					if(!empty($route))
+					{
+						// If the page can resolve, but is route the route says to force
+						if(!empty($page_can_resolve) && $route['type'] == 'route' && $route['http301'] == 'yes')
+						{
+							$context['page'] = $route['routed'];
+						}
+						// If the page can't resolve, and is route
+						elseif(empty($page_can_resolve) && $route['type'] == 'route')
+						{
+							$context['page'] = $route['routed'];
+						}
+						// If is redirect
+						elseif($route['type'] == 'redirect')
 						{
 							if($route['http301'] === 'yes')
 							{
@@ -318,12 +406,31 @@
 							{
 								header("Location:" . $context['page']);
 							}
-							die();
+							die;
 						}
-						break;
 					}
+					else
+					{
+						$index = $this->__getIndexPage();
+
+						if(!$page_can_resolve)
+						{
+							$context['page'] = "/" . $index['handle'] . $context['page'];
+						}
+					}
+					unset($frontend, $route, $page_can_resolve);
 				}
 			}
+		}
+
+		private function __getIndexPage()
+		{
+			return Symphony::Database()->fetchRow(0, "
+				SELECT `tbl_pages`.* FROM `tbl_pages`, `tbl_pages_types`
+				WHERE `tbl_pages_types`.page_id = `tbl_pages`.id
+				AND tbl_pages_types.`type` = 'index'
+				LIMIT 1
+			");
 		}
 
 		public function initaliseAdminPageHead($context)

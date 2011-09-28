@@ -1,9 +1,9 @@
-All source code included in the "Routing" Symphony Extension archive
+All source code included in the "URL Router" Symphony Extension archive
 is, unless otherwise specified, released under the MIT licence as follows:
 
 ----- begin license block -----
 
-Copyright 2010 Rob Philp
+Copyright 2011 Symphony Team
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,4 +24,3 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 ----- end license block -----
-

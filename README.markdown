@@ -1,12 +1,12 @@
 ## URL Router ##
 
-Version: 1.1.0
+Version: 1.2
 
 Author: [Symphony Team]
 
 Build Date: 2011-07-08
 
-Requirements: Symphony 2.2
+Requirements: Symphony >= 2.2
 
 ### Installation ###
 
@@ -18,6 +18,13 @@ Requirements: Symphony 2.2
 
 
 ### Changelog ###
+
+1.2
+
+* Updates to add inline help to the Routes/Redirects in the preferences page.
+* Core code change to wrap the routes and redirects in checks for stability, and to allow more control.
+* Incorporate Root Page Params methods. Allows all 'index' page type parameters to be accessible from the root, as they should be.
+* Add forcing of routing if page to route from exists.
 
 1.1.0
 
