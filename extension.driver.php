@@ -158,8 +158,9 @@
 					$route['original'] = $path;
 
 					$return = $route;
+
+					break;
 				}
-				break;
 			}
 
 			return $return;
