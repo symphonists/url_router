@@ -106,7 +106,33 @@
 		 */
 		public function getRoutes()
 		{
-			return Symphony::Database()->fetch("SELECT * FROM tbl_url_router");
+			$routes = Symphony::Database()->fetch("SELECT * FROM tbl_url_router");
+
+			foreach ($routes as $i => $route)
+			{
+				preg_match_all('/:([0-9a-zA-Z_]+)/', $route['from'], $names, PREG_PATTERN_ORDER);
+				$names = $names[0];
+
+				if (!$names) continue;
+
+				$new  = preg_replace('/:[[0-9a-zA-Z_]+/', '([a-zA-Z0-9_\+\-%]+)', $route['from']);
+				$new  = '/'. trim($new, '/');
+				$new  = '/'. str_replace('/', "\/", $new);
+				$new .= '/i';
+
+				$to = '/'. trim($route['to'], '/');
+				foreach ($names as $k => $n)
+					$to = str_replace($n, '$'. ($k +1), $to);
+
+				$route['from-clean'] = $route['from'];
+				$route['to-clean'] = $route['to'];
+				$route['from'] = $new;
+				$route['to'] = $to;
+
+				$routes[$i] = $route;
+			}
+
+			return $routes;
         }
 
 		/**
@@ -296,12 +322,21 @@
 							$divgroup = new XMLElement('div');
 							$divgroup->setAttribute('class', 'group');
 
+							$from = $route['from'];
+							if (isset($route['from-clean'])) $from = $route['from-clean'];
+							
 							$labelfrom = Widget::Label(__('From'));
-							$labelfrom->appendChild(Widget::Input("settings[url-router][routes][][from]", General::sanitize($route['from'])));
+							$labelfrom->appendChild(Widget::Input("settings[url-router][routes][][from]", General::sanitize($from)));
 							$labelfrom->appendChild(new XMLElement('p', 'Example: "/\/page-name\/(.+\/)/" Wrap in / and ensure to escape metacharacters with \\', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
 ')));
+							$labelfrom->appendChild(new XMLElement('p', 'Example: "page-name/:user/projects/:project"', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
+')));
+
+							$to = $route['to'];
+							if (isset($route['to-clean'])) $to = $route['to-clean'];
+							
 							$labelto = Widget::Label(__('To'));
-							$labelto->appendChild(Widget::Input("settings[url-router][routes][][to]", General::sanitize($route['to'])));
+							$labelto->appendChild(Widget::Input("settings[url-router][routes][][to]", General::sanitize($to)));
 							$divgroup->appendChild($labelfrom);
 							$divgroup->appendChild($labelto);
 
