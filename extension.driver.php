@@ -177,13 +177,23 @@
 
 			if(!empty($context['settings']['url-router']['routes']))
 			{
-				$route = array();
+				$route = array(
+					'type' => '',
+					'from' => '',
+					'to' => '',
+					'http301' => 'no'
+				);
 
 				foreach($context['settings']['url-router']['routes'] as $item)
 				{
 					if(isset($item['type']) && !empty($item['type']))
 					{
-						$route = array();
+						$route = array(
+							'type' => '',
+							'from' => '',
+							'to' => '',
+							'http301' => 'no'
+						);
 
 						$route['type'] = $item['type'];
 					}
