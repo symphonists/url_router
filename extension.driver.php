@@ -29,7 +29,7 @@
 						PRIMARY KEY (`id`)
 					)
 			");
-        }
+		}
 
 		public function update($previousVersion)
 		{
@@ -68,10 +68,10 @@
 			}
 		}
 
-        public function uninstall()
+		public function uninstall()
 		{
-            Symphony::Database()->query("DROP TABLE `tbl_url_router`");
-        }
+			Symphony::Database()->query("DROP TABLE `tbl_url_router`");
+		}
 
 		public function getSubscribedDelegates()
 		{
@@ -87,7 +87,7 @@
 					'callback'	=> 'addCustomPreferenceFieldsets'
 				),
 				array(
-					'page'      => '/system/preferences/',
+					'page'	  => '/system/preferences/',
 					'delegate'  => 'Save',
 					'callback'  => 'save'
 				),
@@ -102,7 +102,7 @@
 		/**
 		 * Get all routes
 		 *
-		 * @return Array    Array of routes from the database
+		 * @return Array	Array of routes from the database
 		 */
 		public function getRoutes()
 		{
@@ -133,14 +133,14 @@
 			}
 
 			return $routes;
-        }
+		}
 
 		/**
 		 * Get the first route that matches the given path
 		 *
 		 * @param String $path Thepath to regex match on
 		 *
-		 * @return Array    Array of matched page details
+		 * @return Array	Array of matched page details
 		 * @return Boolean	False if no page matched
 		 */
 		public function getRoute($path)
