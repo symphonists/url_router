@@ -444,6 +444,7 @@
 						// If is redirect
 						elseif($route['type'] == 'redirect')
 						{
+							$context['page'] = $route['routed'];
 							if($route['http301'] === 'yes')
 							{
 								header("Location:" . $context['page'], true, 301);
