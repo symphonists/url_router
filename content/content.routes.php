@@ -18,19 +18,19 @@
 			$this->setPageType('form');
 			$this->addScriptToHead(URL . '/extensions/url_router/assets/urlrouter.preferences.js', 400, false);
 
+			$this->setTitle(__('%1$s &ndash; %2$s', array(__('Symphony'), __('URL Router'))));
+			$this->appendSubheading(__('URL Router'));
+
 			$allow = $this->_driver->allow();
 
 			$fieldset = new XMLElement('fieldset');
 			$fieldset->setAttribute('class', 'settings');
-			$fieldset->appendChild(new XMLElement('legend', 'URL Router'));
+			$fieldset->appendChild(new XMLElement('legend', 'Routes'));
 
-			$p = new XMLElement('p', 'Define regular expression rules for URL routing', array('class' => 'help'));
-			$fieldset->appendChild($p);
+			$fieldset->appendChild(new XMLElement('p', 'Choose between a <strong>Route</strong>, which silently redirects the content under the original URL, or a <strong>Redirect</strong> which will physically redirect to the new URL.', array('class' => 'help')));
 
 			if($allow)
 			{
-				$p = new XMLElement('p', 'Choose between a <strong>Route</strong>, which silently redirects the content under the original URL, or a <strong>Redirect</strong> which will physically redirect to the new URL.');
-				$fieldset->appendChild($p);
 
 				$group = new XMLElement('div');
 				$group->setAttribute('class', 'subsection');
