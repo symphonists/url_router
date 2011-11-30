@@ -7,8 +7,8 @@
 		public function about()
 		{
 			return array('name' => 'URL Router',
-				'version' => '1.2',
-				'release-date' => '2011-07-08',
+				'version' => '1.3',
+				'release-date' => '2011-11-30',
 				'author' => array(
 					'name' => 'Symphony Team',
 					'website' => 'http://symphony-cms.com',

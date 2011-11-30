@@ -1,10 +1,10 @@
 ## URL Router ##
 
-Version: 1.2
+Version: 1.3
 
 Author: [Symphony Team]
 
-Build Date: 2011-07-08
+Build Date: 2011-11-30
 
 Requirements: Symphony >= 2.2
 
@@ -18,6 +18,10 @@ Requirements: Symphony >= 2.2
 
 
 ### Changelog ###
+
+1.3
+
+* Rails-like routing. You may now use a syntax similar to `page-name/:user/projects/:project` for matching and reference each parameter by its name: `/new-page-name/:user/:project`
 
 1.2
 
