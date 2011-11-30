@@ -92,19 +92,9 @@
 					'callback'	=> 'frontendPrePageResolve'
 				),
 				array(
-					'page'		=> '/system/preferences/',
-					'delegate'	=> 'AddCustomPreferenceFieldsets',
-					'callback'	=> 'addCustomPreferenceFieldsets'
-				),
-				array(
 					'page'	  => '/system/preferences/',
 					'delegate'  => 'Save',
 					'callback'  => 'save'
-				),
-				array(
-					'page' => '/backend/',
-					'delegate' => 'InitaliseAdminPageHead',
-					'callback' => 'initaliseAdminPageHead'
 				)
 			);
 		}
@@ -181,11 +171,11 @@
 		 *
 		 * @param unknown $context Symphony context
 		 */
-		public function save($context)
+		public function save()
 		{
 			$routes = array();
 
-			if(!empty($context['settings']['url-router']['routes']))
+			if(!empty($_POST['settings']['url-router']['routes']))
 			{
 				$route = array(
 					'type' => '',
@@ -194,7 +184,7 @@
 					'http301' => 'no'
 				);
 
-				foreach($context['settings']['url-router']['routes'] as $item)
+				foreach($_POST['settings']['url-router']['routes'] as $item)
 				{
 					if(isset($item['type']) && !empty($item['type']))
 					{
@@ -228,202 +218,8 @@
 
 			if(count($routes) > 0) {
 				Symphony::Database()->insert($routes, "tbl_url_router");
-				unset($context['settings']['url-router']['routes']);
+				unset($_POST['settings']['url-router']['routes']);
 			}
-		}
-
-		public function addCustomPreferenceFieldsets($context)
-		{
-			$allow = $this->allow();
-
-			$fieldset = new XMLElement('fieldset');
-			$fieldset->setAttribute('class', 'settings');
-			$fieldset->appendChild(new XMLElement('legend', 'URL Router'));
-
-			$p = new XMLElement('p', 'Define regular expression rules for URL routing', array('class' => 'help'));
-			$fieldset->appendChild($p);
-
-			if($allow)
-			{
-				$p = new XMLElement('p', 'Choose between a <strong>Route</strong>, which silently redirects the content under the original URL, or a <strong>Redirect</strong> which will physically redirect to the new URL.');
-				$fieldset->appendChild($p);
-
-				$group = new XMLElement('div');
-				$group->setAttribute('class', 'subsection');
-				$group->appendChild(new XMLElement('p', __('Rules'), array('class' => 'label')));
-
-				$ol = new XMLElement('ol');
-				$ol->setAttribute('id', 'url-router-duplicator');
-				$ol->setAttribute('class', 'orderable duplicator collapsible');
-
-			//	Redirect Template
-				$li_re = new XMLElement('li');
-				$li_re->setAttribute('class', 'template');
-				$h4_re = new XMLElement('h4', 'Redirect');
-				$h4_re->setAttribute('class', 'header');
-				$hidden_re = Widget::Input("settings[url-router][routes][][type]", 'redirect', 'hidden');
-				$li_re->appendChild($h4_re);
-				$li_re->appendChild($hidden_re);
-
-			//	Route Template
-				$li_ro = new XMLElement('li');
-				$li_ro->setAttribute('class', 'template');
-				$h4_ro = new XMLElement('h4', 'Route');
-				$h4_ro->setAttribute('class', 'header');
-				$hidden_ro = Widget::Input("settings[url-router][routes][][type]", 'route', 'hidden');
-				$li_ro->appendChild($h4_ro);
-				$li_ro->appendChild($hidden_ro);
-
-			//	From To boxes
-				$divgroup = new XMLElement('div');
-				$divgroup->setAttribute('class', 'group');
-				$labelfrom = Widget::Label(__('From'));
-				$labelfrom->appendChild(Widget::Input("settings[url-router][routes][][from]"));
-				$labelfrom->appendChild(new XMLElement('p', 'Simplified: <code>page-name/:user/projects/:project</code>', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-')));
-				$labelfrom->appendChild(new XMLElement('p', 'Regular expression: <code>/\/page-name\/(.+\/)/</code> Wrap in <code>/</code> and ensure to escape metacharacters with <code>\\</code>', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-')));
-
-				$labelto = Widget::Label(__('To'));
-				$labelto->appendChild(Widget::Input("settings[url-router][routes][][to]"));
-				$labelto->appendChild(new XMLElement('p', 'Simplified: <code>/new-page-name/:user/:project</code>', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-')));
-				$labelto->appendChild(new XMLElement('p', 'Regular expression: <code>/new-page-name/$1/</code>', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-')));
-
-
-				$divgroup->appendChild($labelfrom);
-				$divgroup->appendChild($labelto);
-
-				$divcontent = new XMLElement('div');
-				$divcontent->setAttribute('class', 'content');
-				$divcontent->appendChild($divgroup);
-
-				$recontent = clone $divcontent;
-
-				$regroup = new XMLElement('div');
-				$regroup->setAttribute('class', 'group');
-				$label = Widget::Label();
-				$input = Widget::Input('settings[url-router][routes][][http301]', 'yes', 'checkbox');
-				$label->setValue($input->generate() . ' Send an HTTP 301 Redirect');
-				$regroup->appendChild($label);
-				$recontent->appendChild($regroup);
-
-				$divgroup = new XMLElement('div');
-				$divgroup->setAttribute('class', 'group');
-				$label = Widget::Label();
-				$input = Widget::Input('settings[url-router][routes][][http301]', 'yes', 'checkbox');
-				$label->setValue($input->generate() . ' Force re-route if page exists');
-				$divgroup->appendChild($label);
-				$divcontent->appendChild($divgroup);
-
-				$li_re->appendChild($recontent);
-				$li_ro->appendChild($divcontent);
-
-				$ol->appendChild($li_ro);
-				$ol->appendChild($li_re);
-
-				if($routes = $this->getRoutes())
-				{
-					if(is_array($routes))
-					{
-						foreach($routes as $route)
-						{
-							if($route['type'] == 'redirect')
-							{
-								$h4 = new XMLElement('h4', 'Redirect');
-							}
-							else
-							{
-								$h4 = new XMLElement('h4', 'Route');
-							}
-
-							$hidden = Widget::Input("settings[url-router][routes][][type]", $route['type'], 'hidden');
-
-							$li = new XMLElement('li');
-							$li->setAttribute('class', 'instance expanded');
-							$h4->setAttribute('class', 'header');
-							$li->appendChild($h4);
-							$li->appendChild($hidden);
-
-							$divcontent = new XMLElement('div');
-							$divcontent->setAttribute('class', 'content');
-
-							$divgroup = new XMLElement('div');
-							$divgroup->setAttribute('class', 'group');
-
-							$from = $route['from'];
-							if (isset($route['from-clean'])) $from = $route['from-clean'];
-							
-							$labelfrom = Widget::Label(__('From'));
-							$labelfrom->appendChild(Widget::Input("settings[url-router][routes][][from]", General::sanitize($from)));
-							$labelfrom->appendChild(new XMLElement('p', 'Simplified: <code>page-name/:user/projects/:project</code>', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-			')));
-							$labelfrom->appendChild(new XMLElement('p', 'Regular expression: <code>/\/page-name\/(.+\/)/</code> Wrap in <code>/</code> and ensure to escape metacharacters with <code>\\</code>', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-			')));
-
-							$to = $route['to'];
-							if (isset($route['to-clean'])) $to = $route['to-clean'];
-							
-							$labelto = Widget::Label(__('To'));
-							$labelto->appendChild(Widget::Input("settings[url-router][routes][][to]", General::sanitize($to)));
-							$labelto->appendChild(new XMLElement('p', 'Simplified: <code>/new-page-name/:user/:project</code>', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-			')));
-							$labelto->appendChild(new XMLElement('p', 'Regular expression: <code>/new-page-name/$1/</code>', array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-			')));
-
-							$divgroup->appendChild($labelfrom);
-							$divgroup->appendChild($labelto);
-
-							$divcontent->appendChild($divgroup);
-							if($route['type'] == 'redirect')
-							{
-								$regroup = new XMLElement('div');
-								$regroup->setAttribute('class', 'group');
-
-								$label = Widget::Label();
-								$input = Widget::Input('settings[url-router][routes][][http301]', 'yes', 'checkbox');
-								if($route['http301'] == 'yes')
-								{
-									$input->setAttribute('checked', 'checked');
-								}
-								$label->setValue($input->generate() . ' Send an HTTP 301 Redirect');
-								$regroup->appendChild($label);
-								$divcontent->appendChild($regroup);
-							}
-							else
-							{
-								$divgroup = new XMLElement('div');
-								$divgroup->setAttribute('class', 'group');
-
-								$label = Widget::Label();
-								$input = Widget::Input('settings[url-router][routes][][http301]', 'yes', 'checkbox');
-								if($route['http301'] == 'yes')
-								{
-									$input->setAttribute('checked', 'checked');
-								}
-								$label->setValue($input->generate() . ' Force re-route if page exists');
-								$divgroup->appendChild($label);
-								$divcontent->appendChild($divgroup);
-							}
-							$li->appendChild($divcontent);
-							$ol->appendChild($li);
-						}
-					}
-				}
-
-				$group->appendChild($ol);
-
-				$fieldset->appendChild($group);
-			}
-			else
-			{
-				$p = new XMLElement('p', 'This extension\'s code has been updated. For this extension to operate corrcectly, please update it on the Extensions page.');
-				$fieldset->appendChild($p);
-				$p = new XMLElement('p', '<strong>All current URL routing has been disabled due to changes to the code, and will not be re-enabled until the above step has been taken!</strong>');
-				$fieldset->appendChild($p);
-			}
-			$context['wrapper']->appendChild($fieldset);
 		}
 
 		public function allow()
@@ -504,12 +300,4 @@
 			");
 		}
 
-		public function initaliseAdminPageHead($context)
-		{
-			$page = $context['parent']->Page;
-			if($page instanceof contentSystemPreferences)
-			{
-				$page->addScriptToHead(URL . '/extensions/url_router/assets/urlrouter.preferences.js', 400, false);
-			}
-		}
 	}
