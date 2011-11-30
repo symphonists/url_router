@@ -31,6 +31,16 @@
 			");
 		}
 
+		public function fetchNavigation() {
+			return array(
+				array(
+					'location' => 'System',
+					'name' => __('URL Router'),
+					'link' => '/routes/'
+				)
+			);
+		}
+
 		public function update($previousVersion)
 		{
 			if(version_compare($previousVersion, '1.1.0', '<'))
