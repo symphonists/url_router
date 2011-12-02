@@ -34,7 +34,6 @@
 
 				$group = new XMLElement('div');
 				$group->setAttribute('class', 'subsection');
-				$group->appendChild(new XMLElement('p', __('Rules'), array('class' => 'label')));
 
 				$ol = new XMLElement('ol');
 				$ol->setAttribute('id', 'url-router-duplicator');
