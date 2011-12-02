@@ -27,7 +27,7 @@
 			$fieldset->setAttribute('class', 'settings');
 			$fieldset->appendChild(new XMLElement('legend', 'Routes'));
 
-			$fieldset->appendChild(new XMLElement('p', 'Choose between a <strong>Route</strong>, which silently redirects the content under the original URL, or a <strong>Redirect</strong> which will physically redirect to the new URL.', array('class' => 'help')));
+			$fieldset->appendChild(new XMLElement('p', __('Choose between a <strong>Route</strong>, which silently shows the content under the original URL, or a <strong>Redirect</strong> which will actually redirect the user to the new URL.'), array('class' => 'help')));
 
 			if($allow)
 			{
