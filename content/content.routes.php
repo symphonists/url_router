@@ -4,8 +4,8 @@
 
 	class contentExtensionUrl_routerRoutes extends AdministrationPage {
 
-		public function __construct(&$parent){
-			parent::__construct($parent);
+		public function __construct(){
+			parent::__construct();
 
 			$this->_driver = Symphony::ExtensionManager()->create('url_router');
 		}
@@ -25,7 +25,7 @@
 
 			$fieldset = new XMLElement('fieldset');
 			$fieldset->setAttribute('class', 'settings');
-			$fieldset->appendChild(new XMLElement('legend', __('Routes')));
+			$fieldset->appendChild(new XMLElement('legend', __('URL Routes')));
 
 			$fieldset->appendChild(new XMLElement('p', __('Choose between a <strong>Route</strong>, which silently shows the content under the original URL, or a <strong>Redirect</strong> which will actually redirect the user to the new URL.'), array('class' => 'help')));
 
@@ -33,15 +33,18 @@
 			{
 
 				$group = new XMLElement('div');
-				$group->setAttribute('class', 'subsection');
+				$group->setAttribute('class', 'frame');
 
 				$ol = new XMLElement('ol');
 				$ol->setAttribute('id', 'url-router-duplicator');
+				$ol->setAttribute('data-add', __('Add route'));
+				$ol->setAttribute('data-remove', __('Remove route'));
 				$ol->setAttribute('class', 'orderable duplicator collapsible');
 
 			//	Redirect Template
 				$li_re = new XMLElement('li');
 				$li_re->setAttribute('class', 'template');
+				$li_re->setAttribute('data-type', 'redirect');
 				$h4_re = new XMLElement('h4', __('Redirect'));
 				$h4_re->setAttribute('class', 'header');
 				$hidden_re = Widget::Input("settings[url-router][routes][][type]", 'redirect', 'hidden');
@@ -51,6 +54,7 @@
 			//	Route Template
 				$li_ro = new XMLElement('li');
 				$li_ro->setAttribute('class', 'template');
+				$li_ro->setAttribute('data-type', 'route');
 				$h4_ro = new XMLElement('h4', __('Route'));
 				$h4_ro->setAttribute('class', 'header');
 				$hidden_ro = Widget::Input("settings[url-router][routes][][type]", 'route', 'hidden');
