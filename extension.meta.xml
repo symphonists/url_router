@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<extension id="url_router" xmlns="http://symphony-cms.com/extensions/1.0">
+
+	<!-- string, required -->
+	<name>URL Router</name>
+
+	<!-- string, required (@lang optional) -->
+	<description lang="en">Route pages and URLs to other locations with regex or param style syntax.</description>
+
+	<!-- string, required (@type=github|codebase|other, for future repo posibilities?) (must be Github for clever API things to happen) -->
+	<repo type="github">https://github.com/symphonists/url_router</repo>
+
+	<!-- string, optional (@type=homepage|wiki|other?) -->
+	<url type="homepage">http://symphony-cms.com/downloads/extensions/url_router</url>
+
+	<!-- list, optional (Symphony to define suggested vocabulary, suggest leaving this out initially?) -->
+	<types>
+		<type>Workflow</type>
+		<type>Other</type>
+	</types>
+
+	<!-- list, required -->
+	<authors>
+		<author>
+			<!-- string, required (@github, @symphony, @twitter optional) -->
+			<name github="symphonists" symphony="symphonists">Symphonists</name>
+			<website>http://symphony-cms.com</website>
+		</author>
+	</authors>
+
+	<!-- list, required at least one. Largest version number is assumed latest -->
+	<releases>
+		<release version="0.1" max="2.2">
+			* Initial release, brief documentation forthcoming.
+		</release>
+		<release version="0.2" max="2.2">
+			* Contribution: Max Wheeler (http://makenosound.com).
+			* Only add `router.js` to the `/system/preferences/` page (was breaking other JS).
+			* Updated README with correct installation details.
+		</release>
+		<release version="0.3" max="2.2">
+			* Contribution: Max Wheeler (http://makenosound.com).
+			* Remove `router.js` as it's no longer needed.
+			* Fix error in save logic, no longer tries to write to `config.php`.
+		</release>
+		<release version="0.4" max="2.2">
+			* Contribution: John Porter (http://designermonkey.co.uk).
+			* Applied patches from pull requests to fix various issues.
+		</release>
+		<release version="0.5" min="2.2" max="2.2.5">
+			* Symphony 2.2 compatiability update.
+		</release>
+		<release version="1.0.0" min="2.2" max="2.2.5">
+			* Contribution: John Porter (http://designermonkey.co.uk).
+			* Contribution: Nick Dunn (http://nick-dunn.co.uk).
+			* Update as Symphony Team takes ownership.
+			* Renamed extension class and folder to url_router.
+			* Manually merged @nickdunn's changes.
+		</release>
+		<release version="1.0.1" min="2.2" max="2.2.5">
+			* Bug fix to remove rogue query I forgot, thanks [Vlad Ghita](https://github.com/vlad-ghita) for spotting that one.
+		</release>
+		<release version="1.0.2" min="2.2" max="2.2.5">
+			* Stupidity fixes.
+		</release>
+		<release version="1.1.0" min="2.2" max="2.2.5">
+			* Removed the global option to redirect routes.
+			* Changed the duplicator templates to allow either Routes or Redirects, instead of the global choice.
+			* Added updating logic.
+			* Added prevention of routing if the code is updated, but the extension reference in Symphony isn't. This is due to the functionality changing, and will prevent errors.
+		</release>
+		<release version="1.2.0" min="2.2" max="2.2.5">
+			* Updates to add inline help to the Routes/Redirects in the preferences page.
+			* Core code change to wrap the routes and redirects in checks for stability, and to allow more control.
+			* Incorporate Root Page Params methods. Allows all 'index' page type parameters to be accessible from the root, as they should be.
+			* Add forcing of routing if page to route from exists.
+		</release>
+		<release version="1.3.0" min="2.2" max="2.2.5">
+			* Rails-like routing. You may now use a syntax similar to `page-name/:user/projects/:project` for matching and reference each parameter by its name: `/new-page-name/:user/:project`
+		</release>
+	</releases>
+
+</extension>

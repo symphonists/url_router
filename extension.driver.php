@@ -4,19 +4,6 @@
 
 		private $_hasrun = false;
 
-		public function about()
-		{
-			return array('name' => 'URL Router',
-				'version' => '1.3',
-				'release-date' => '2011-11-30',
-				'author' => array(
-					'name' => 'Symphony Team',
-					'website' => 'http://symphony-cms.com',
-				),
-				'description'   => 'Allows Regular Expression URL Routing in Symphony.'
-			);
-		}
-
 		public function install()
 		{
 			Symphony::Database()->query("
@@ -34,8 +21,8 @@
 		public function fetchNavigation() {
 			return array(
 				array(
-					'location' => 'System',
-					'name' => __('URL Router'),
+					'location' => 'Blueprints',
+					'name' => __('URL Routes'),
 					'link' => '/routes/'
 				)
 			);
