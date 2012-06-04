@@ -97,12 +97,12 @@
 
 			foreach ($routes as $i => $route)
 			{
-				preg_match_all('/:([0-9a-zA-Z_]+)/', $route['from'], $names, PREG_PATTERN_ORDER);
+				preg_match_all('/[$:]([0-9a-zA-Z_]+)/', $route['from'], $names, PREG_PATTERN_ORDER);
 				$names = $names[0];
 
 				if (!$names) continue;
 
-				$new  = preg_replace('/:[[0-9a-zA-Z_]+/', '([a-zA-Z0-9_\+\-%]+)', $route['from']);
+				$new  = preg_replace('/[$:][[0-9a-zA-Z_]+/', '([a-zA-Z0-9_\+\-%]+)', $route['from']);
 				$new  = '/'. trim($new, '/');
 				$new  = '/'. str_replace('/', "\/", $new);
 				$new .= '/i';
