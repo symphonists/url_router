@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension id="url_router" status="released" xmlns="http://symphony-cms.com/schemas/extension/1.0">
 	<name>URL Router</name>
-	<description>Regex based URL re-routing</description>
+	<description>Regex and Simplified Parameter based URL re-routing</description>
 	<repo type="github">https://github.com/symphonists/url_router</repo>
 	<url type="discuss">http://symphony-cms.com/discuss/thread/37320/</url>
 	<url type="issues">https://github.com/symphonists/url_router/issues</url>
@@ -15,6 +15,11 @@
 		</author>
 	</authors>
 	<releases>
+		<release version="2" date="2011-11-30" min="2.3">
+			* Major release includes updates for 2.3
+			* Moved Routes onto separate page under Blueprints (Nils Werner, John Porter)
+			* Removed the update functionality as is a breaking release
+		</release>
 		<release version="1.3" date="2011-11-30" min="2.2">
 			* Rails-like routing. You may now use a syntax similar to `page-name/:user/projects/:project` for matching and reference each parameter by its name: `/new-page-name/:user/:project`
 		</release>
