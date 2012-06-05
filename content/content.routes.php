@@ -11,7 +11,7 @@
 		}
 
 		public function __actionIndex() {
-			$this->_driver->save();
+			$this->_driver->saveRoutes();
 		}
 
 		public function __viewIndex() {
@@ -21,62 +21,52 @@
 			$this->setTitle(__('%1$s &ndash; %2$s', array(__('Symphony'), __('URL Router'))));
 			$this->appendSubheading(__('URL Router'));
 
-			$allow = $this->_driver->allow();
-
 			$fieldset = new XMLElement('fieldset');
 			$fieldset->setAttribute('class', 'settings');
 			$fieldset->appendChild(new XMLElement('legend', __('URL Routes')));
 
 			$fieldset->appendChild(new XMLElement('p', __('Choose between a <strong>Route</strong>, which silently shows the content under the original URL, or a <strong>Redirect</strong> which will actually redirect the user to the new URL.'), array('class' => 'help')));
 
-			if($allow)
-			{
-
 				$group = new XMLElement('div');
 				$group->setAttribute('class', 'frame');
 
 				$ol = new XMLElement('ol');
-				$ol->setAttribute('id', 'url-router-duplicator');
-				$ol->setAttribute('data-add', __('Add route'));
-				$ol->setAttribute('data-remove', __('Remove route'));
-				$ol->setAttribute('class', 'orderable duplicator collapsible');
+				$ol->setAttribute('data-name', __('Add route'));
+				$ol->setAttribute('data-type', __('Remove route'));
 
 			//	Redirect Template
 				$li_re = new XMLElement('li');
 				$li_re->setAttribute('class', 'template');
+				$li_re->setAttribute('data-name', 'Redirect');
 				$li_re->setAttribute('data-type', 'redirect');
-				$h4_re = new XMLElement('h4', __('Redirect'));
-				$h4_re->setAttribute('class', 'header');
+				$header_re = new XMLElement('header', __('Redirect'));
 				$hidden_re = Widget::Input("settings[url-router][routes][][type]", 'redirect', 'hidden');
-				$li_re->appendChild($h4_re);
+				$li_re->appendChild($header_re);
 				$li_re->appendChild($hidden_re);
 
 			//	Route Template
 				$li_ro = new XMLElement('li');
 				$li_ro->setAttribute('class', 'template');
+				$li_ro->setAttribute('data-name', 'Route');
 				$li_ro->setAttribute('data-type', 'route');
-				$h4_ro = new XMLElement('h4', __('Route'));
-				$h4_ro->setAttribute('class', 'header');
+				$header_ro = new XMLElement('header', __('Route'));
 				$hidden_ro = Widget::Input("settings[url-router][routes][][type]", 'route', 'hidden');
-				$li_ro->appendChild($h4_ro);
+				$li_ro->appendChild($header_ro);
 				$li_ro->appendChild($hidden_ro);
 
 			//	From To boxes
 				$divgroup = new XMLElement('div');
 				$divgroup->setAttribute('class', 'group');
+
 				$labelfrom = Widget::Label(__('From'));
 				$labelfrom->appendChild(Widget::Input("settings[url-router][routes][][from]"));
-				$labelfrom->appendChild(new XMLElement('p', __('Simplified: <code>page-name/:user/projects/:project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-')));
-				$labelfrom->appendChild(new XMLElement('p', __('Regular expression: <code>/\\/page-name\\/(.+\\/)/</code> Wrap in <code>/</code> and ensure to escape metacharacters with <code>\\</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-')));
+				$labelfrom->appendChild(new XMLElement('p', __('Simplified: <code>page-name/$user/projects/$project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
+				$labelfrom->appendChild(new XMLElement('p', __('Regular expression: <code>/\\/page-name\\/(.+\\/)/</code> Wrap in <code>/</code> and ensure to escape metacharacters with <code>\\</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
 
 				$labelto = Widget::Label(__('To'));
 				$labelto->appendChild(Widget::Input("settings[url-router][routes][][to]"));
-				$labelto->appendChild(new XMLElement('p', __('Simplified: <code>/new-page-name/:user/:project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-')));
-				$labelto->appendChild(new XMLElement('p', __('Regular expression: <code>/new-page-name/$1/</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-')));
+				$labelto->appendChild(new XMLElement('p', __('Simplified: <code>/new-page-name/$user/$project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
+				$labelto->appendChild(new XMLElement('p', __('Regular expression: <code>/new-page-name/$1/</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
 
 
 				$divgroup->appendChild($labelfrom);
@@ -118,19 +108,18 @@
 						{
 							if($route['type'] == 'redirect')
 							{
-								$h4 = new XMLElement('h4', __('Redirect'));
+								$header = new XMLElement('header', __('Redirect'));
 							}
 							else
 							{
-								$h4 = new XMLElement('h4', __('Route'));
+								$header = new XMLElement('header', __('Route'));
 							}
 
 							$hidden = Widget::Input("settings[url-router][routes][][type]", $route['type'], 'hidden');
 
 							$li = new XMLElement('li');
 							$li->setAttribute('class', 'instance expanded');
-							$h4->setAttribute('class', 'header');
-							$li->appendChild($h4);
+							$li->appendChild($header);
 							$li->appendChild($hidden);
 
 							$divcontent = new XMLElement('div');
@@ -144,20 +133,16 @@
 							
 							$labelfrom = Widget::Label(__('From'));
 							$labelfrom->appendChild(Widget::Input("settings[url-router][routes][][from]", General::sanitize($from)));
-							$labelfrom->appendChild(new XMLElement('p', __('Simplified: <code>page-name/:user/projects/:project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-			')));
-							$labelfrom->appendChild(new XMLElement('p', __('Regular expression: <code>/\\/page-name\\/(.+\\/)/</code> Wrap in <code>/</code> and ensure to escape metacharacters with <code>\\</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-			')));
+							$labelfrom->appendChild(new XMLElement('p', __('Simplified: <code>page-name/:user/projects/:project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
+							$labelfrom->appendChild(new XMLElement('p', __('Regular expression: <code>/\\/page-name\\/(.+\\/)/</code> Wrap in <code>/</code> and ensure to escape metacharacters with <code>\\</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
 
 							$to = $route['to'];
 							if (isset($route['to-clean'])) $to = $route['to-clean'];
 							
 							$labelto = Widget::Label(__('To'));
 							$labelto->appendChild(Widget::Input("settings[url-router][routes][][to]", General::sanitize($to)));
-							$labelto->appendChild(new XMLElement('p', __('Simplified: <code>/new-page-name/:user/:project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-			')));
-							$labelto->appendChild(new XMLElement('p', __('Regular expression: <code>/new-page-name/$1/</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;
-			')));
+							$labelto->appendChild(new XMLElement('p', __('Simplified: <code>/new-page-name/:user/:project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
+							$labelto->appendChild(new XMLElement('p', __('Regular expression: <code>/new-page-name/$1/</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
 
 							$divgroup->appendChild($labelfrom);
 							$divgroup->appendChild($labelto);
@@ -202,16 +187,6 @@
 				$group->appendChild($ol);
 
 				$fieldset->appendChild($group);
-			}
-			else
-			{
-				$p = new XMLElement('p', 'This extension\'s code has been updated. For this extension to operate corrcectly, please update it on the Extensions page.');
-				$fieldset->appendChild($p);
-				$p = new XMLElement('p', '<strong>All current URL routing has been disabled due to changes to the code, and will not be re-enabled until the above step has been taken!</strong>');
-				$fieldset->appendChild($p);
-			}
-
-
 
 			$this->Form->appendChild($fieldset);
 
