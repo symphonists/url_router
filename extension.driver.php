@@ -28,43 +28,6 @@
 			);
 		}
 
-		public function update($previousVersion)
-		{
-			if(version_compare($previousVersion, '1.1.0', '<'))
-			{
-				Symphony::Configuration()->remove('url-router');
-
-				$type = Symphony::Database()->fetchVar('Field', 0, "SHOW COLUMNS FROM `tbl_url_router` LIKE 'type'");
-
-				if(!$type)
-				{
-					return Symphony::Database()->query("
-						ALTER TABLE `tbl_url_router`
-						ADD `type` ENUM('route','redirect') DEFAULT 'route',
-					");
-				}
-
-				return false;
-			}
-
-			if(version_compare($previousVersion, '1.1.1', '<'))
-			{
-				Symphony::Configuration()->remove('url-router');
-
-				$type = Symphony::Database()->fetchVar('Field', 0, "SHOW COLUMNS FROM `tbl_url_router` LIKE 'http301'");
-
-				if(!$type)
-				{
-					return Symphony::Database()->query("
-						ALTER TABLE `tbl_url_router`
-						ADD `http301` ENUM('yes','no') DEFAULT 'no'
-					");
-				}
-
-				return false;
-			}
-		}
-
 		public function uninstall()
 		{
 			Symphony::Database()->query("DROP TABLE `tbl_url_router`");
@@ -77,11 +40,6 @@
 					'page'		=> '/frontend/',
 					'delegate'	=> 'FrontendPrePageResolve',
 					'callback'	=> 'frontendPrePageResolve'
-				),
-				array(
-					'page'	  => '/system/preferences/',
-					'delegate'  => 'Save',
-					'callback'  => 'save'
 				)
 			);
 		}
@@ -158,7 +116,7 @@
 		 *
 		 * @param unknown $context Symphony context
 		 */
-		public function save()
+		public function saveRoutes()
 		{
 			$routes = array();
 
@@ -209,71 +167,59 @@
 			}
 		}
 
-		public function allow()
-		{
-			$installed = Symphony::Database()->fetchVar('version', 0, "SELECT `version` FROM `tbl_extensions` WHERE `name` = 'url_router'");
-
-			return version_compare($installed, '1.1.0', '>=');
-		}
-
 		public function frontendPrePageResolve($context)
 		{
-			$allow = $this->allow();
-
-			if($allow)
+			if(!$this->_hasrun)
 			{
-				if(!$this->_hasrun)
+				// Prevent an infinity loop of delegate callbacks to this function - @creativedutchmen
+				$this->_hasrun = true;
+
+				// Used to check page resolution, would cause loop.
+				$frontend = FrontEnd::Page();
+
+				// Get route or empty array
+				$route = $this->getRoute($context['page']);
+
+				// Check whether the current page resolves as it is
+				$page_can_resolve = $frontend->resolvePage($context['page']);
+
+				if(!empty($route))
 				{
-					// Prevent an infinity loop of delegate callbacks to this function - @creativedutchmen
-					$this->_hasrun = true;
-
-					// Used to check page resolution, would cause loop.
-					$frontend = FrontEnd::Page();
-
-					// Get route or empty array
-					$route = $this->getRoute($context['page']);
-
-					// Check whether the current page resolves as it is
-					$page_can_resolve = $frontend->resolvePage($context['page']);
-
-					if(!empty($route))
+					// If the page can resolve, but is route the route says to force
+					if(!empty($page_can_resolve) && $route['type'] == 'route' && $route['http301'] == 'yes')
 					{
-						// If the page can resolve, but is route the route says to force
-						if(!empty($page_can_resolve) && $route['type'] == 'route' && $route['http301'] == 'yes')
-						{
-							$context['page'] = $route['routed'];
-						}
-						// If the page can't resolve, and is route
-						elseif(empty($page_can_resolve) && $route['type'] == 'route')
-						{
-							$context['page'] = $route['routed'];
-						}
-						// If is redirect
-						elseif($route['type'] == 'redirect')
-						{
-							$context['page'] = $route['routed'];
-							if($route['http301'] === 'yes')
-							{
-								header("Location:" . $context['page'], true, 301);
-							}
-							else
-							{
-								header("Location:" . $context['page']);
-							}
-							die;
-						}
+						$context['page'] = $route['routed'];
 					}
-					else
+					// If the page can't resolve, and is route
+					elseif(empty($page_can_resolve) && $route['type'] == 'route')
 					{
-						$index = $this->__getIndexPage();
-
-						if(!$page_can_resolve)
-						{
-							$context['page'] = "/" . $index['handle'] . $context['page'];
-						}
+						$context['page'] = $route['routed'];
 					}
-					unset($frontend, $route, $page_can_resolve);
+					// If is redirect
+					elseif($route['type'] == 'redirect')
+					{
+						$context['page'] = $route['routed'];
+						if($route['http301'] === 'yes')
+						{
+							header("Location:" . $context['page'], true, 301);
+						}
+						else
+						{
+							header("Location:" . $context['page']);
+						}
+						die;
+					}
 				}
+				else
+				{
+					$index = $this->__getIndexPage();
+
+					if(!$page_can_resolve)
+					{
+						$context['page'] = "/" . $index['handle'] . $context['page'];
+					}
+				}
+				unset($frontend, $route, $page_can_resolve);
 			}
 		}
 
