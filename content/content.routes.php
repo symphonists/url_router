@@ -16,7 +16,7 @@
 
 		public function __viewIndex() {
 			$this->setPageType('form');
-			$this->addScriptToHead(URL . '/extensions/url_router/assets/urlrouter.preferences.js', 400, false);
+			$this->addScriptToHead(URL . '/extensions/url_router/assets/url_router.preferences.js', 400, false);
 
 			$this->setTitle(__('%1$s &ndash; %2$s', array(__('Symphony'), __('URL Router'))));
 			$this->appendSubheading(__('URL Router'));
