@@ -15,6 +15,9 @@
 		</author>
 	</authors>
 	<releases>
+		<release version="2.0.1" date="2012-07-13" min="2.3">
+			* Bug fix for Symphony hosted in a subfolder. Thanks Nils Hoerrmann.
+		</release>
 		<release version="2" date="2012-06-05" min="2.3">
 			* Major release includes updates for 2.3
 			* Moved Routes onto separate page under Blueprints (Nils Werner, John Porter)

@@ -201,11 +201,11 @@
 						$context['page'] = $route['routed'];
 						if($route['http301'] === 'yes')
 						{
-							header("Location:" . $context['page'], true, 301);
+							header("Location:" . URL . $context['page'], true, 301);
 						}
 						else
 						{
-							header("Location:" . $context['page']);
+							header("Location:" . URL . $context['page']);
 						}
 						die;
 					}
