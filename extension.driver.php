@@ -21,7 +21,7 @@
 		public function fetchNavigation() {
 			return array(
 				array(
-					'location' => 'Blueprints',
+					'location' => __('Blueprints'),
 					'name' => __('URL Routes'),
 					'link' => '/routes/'
 				)
