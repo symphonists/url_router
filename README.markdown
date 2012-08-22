@@ -1,12 +1,12 @@
 ## URL Router ##
 
-Version: 1.3
+Version: 2.0.2
 
 Author: [Symphony Team]
 
-Build Date: 2011-11-30
+Build Date: 2012-08-22
 
-Requirements: Symphony >= 2.2
+Requirements: Symphony >= 2.3
 
 ### Installation ###
 
