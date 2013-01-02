@@ -102,6 +102,8 @@
 
 					$route['original'] = $path;
 
+					$route['external'] = $this->isExternal($route['to']);
+
 					$return = $route;
 
 					break;
@@ -109,6 +111,36 @@
 			}
 
 			return $return;
+		}
+
+		public function isExternal($route) {
+			return (strstr($route, 'http') !== false) ? true : false;
+		}
+
+		/**
+		 * Filter out any params that are in the 'to' route as a querystring, unless the route contains 'http://'
+		 * @param  String $route The 'to' route as a string
+		 * @return String        the filtered string, or full string if it contains 'http://'
+		 */
+		public function filterGetParams($route) {
+			$return = $route;
+
+			if(strpos($route, '?')) {
+				$parts = preg_split('/(\?|&)/', $route);
+
+				$return = $parts[0];
+				unset($parts[0]);
+
+				foreach($parts as $part) {
+					if(!empty($part)) {
+						$bits = explode('=', $part);
+
+						$_GET[$bits[0]] = $bits[1];
+					}
+				}
+
+				return $return;
+			}
 		}
 
 		/**
@@ -185,18 +217,20 @@
 
 				if(!empty($route))
 				{
-					// If the page can resolve, but is route the route says to force
-					if(!empty($page_can_resolve) && $route['type'] == 'route' && $route['http301'] == 'yes')
+					// If the page can resolve, but is route and isn't external and the route says to force
+					if(!empty($page_can_resolve) && $route['type'] == 'route' && $route['external'] === false && $route['http301'] == 'yes')
 					{
+						$route['routed'] = $this->filterGetParams($route['routed']);
 						$context['page'] = $route['routed'];
 					}
-					// If the page can't resolve, and is route
-					elseif(empty($page_can_resolve) && $route['type'] == 'route')
+					// If the page can't resolve, and is route and isn't external
+					elseif(empty($page_can_resolve) && $route['type'] == 'route' && $route['external'] === false)
 					{
+						$route['routed'] = $this->filterGetParams($route['routed']);
 						$context['page'] = $route['routed'];
 					}
 					// If is redirect
-					elseif($route['type'] == 'redirect')
+					elseif($route['type'] == 'redirect' || $route['external'])
 					{
 						$context['page'] = $route['routed'];
 						if($route['http301'] === 'yes')
@@ -232,5 +266,4 @@
 				LIMIT 1
 			");
 		}
-
 	}
