@@ -1,10 +1,10 @@
 ## URL Router ##
 
-Version: 2.0.2
+Version: 2.0.3
 
 Author: [Symphony Team]
 
-Build Date: 2012-08-22
+Build Date: 2013-01-02
 
 Requirements: Symphony >= 2.3
 
