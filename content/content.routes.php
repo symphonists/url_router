@@ -21,6 +21,12 @@
 			$this->setTitle(__('%1$s &ndash; %2$s', array(__('Symphony'), __('URL Router'))));
 			$this->appendSubheading(__('URL Router'));
 
+			if(isset($this->_context[1]) == 'saved') {
+				$this->pageAlert(
+					__('Routes saved at %s.', array(Widget::Time()->generate()))
+					, Alert::SUCCESS);
+			}
+
 			$fieldset = new XMLElement('fieldset');
 			$fieldset->setAttribute('class', 'settings');
 			$fieldset->appendChild(new XMLElement('legend', __('URL Routes')));

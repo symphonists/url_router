@@ -206,6 +206,8 @@
 				Symphony::Database()->insert($routes, "tbl_url_router");
 				unset($_POST['settings']['url-router']['routes']);
 			}
+
+			redirect(SYMPHONY_URL . '/extension/url_router/routes/index/saved/');
 		}
 
 		public function frontendPrePageResolve($context)
