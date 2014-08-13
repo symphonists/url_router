@@ -131,12 +131,12 @@
 
 						$labelfrom = Widget::Label(__('From'));
 						$labelfrom->appendChild(Widget::Input("settings[url-router][routes][][from]", General::sanitize($from)));
-						$labelfrom->appendChild(new XMLElement('p', __('Simplified: <code>page-name/:user/projects/:project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
+						$labelfrom->appendChild(new XMLElement('p', __('Simplified: <code>page-name/$user/projects/$project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
 						$labelfrom->appendChild(new XMLElement('p', __('Regular expression: <code>/\\/page-name\\/(.+\\/)/</code> Wrap in <code>/</code> and ensure to escape metacharacters with <code>\\</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
 
 						$labelto = Widget::Label(__('To'));
 						$labelto->appendChild(Widget::Input("settings[url-router][routes][][to]", General::sanitize($to)));
-						$labelto->appendChild(new XMLElement('p', __('Simplified: <code>/new-page-name/:user/:project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
+						$labelto->appendChild(new XMLElement('p', __('Simplified: <code>/new-page-name/$user/$project</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
 						$labelto->appendChild(new XMLElement('p', __('Regular expression: <code>/new-page-name/$1/</code>'), array('class' => 'help', 'style' => 'margin: 0.5em 0 -0.5em;')));
 
 						$divgroup->appendChild($labelfrom);
@@ -195,4 +195,3 @@
 		}
 	}
 
-?>
