@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<extension id="url_router" status="released" xmlns="http://symphony-cms.com/schemas/extension/1.0">
+<extension id="url_router" status="released" xmlns="http://getsymphony.com/schemas/extension/1.0">
 	<name>URL Router</name>
 	<description>Regex and Simplified Parameter based URL re-routing</description>
 	<repo type="github">https://github.com/symphonists/url_router</repo>
-	<url type="discuss">http://symphony-cms.com/discuss/thread/37320/</url>
+	<url type="discuss">http://getsymphony.com/discuss/thread/37320/</url>
 	<url type="issues">https://github.com/symphonists/url_router/issues</url>
 	<types>
 		<type>Other</type>
@@ -15,6 +15,12 @@
 		</author>
 	</authors>
 	<releases>
+		<release version="3.0" date="2014-08-13" min="2.4" max="2.5.x">
+			* Symphony 2.4+ support
+			* [#18](https://github.com/symphonists/url_router/issues/18) Add success message when saving routes
+			* [#16](https://github.com/symphonists/url_router/issues/16) Consistently use dollar notation instead of colon
+			* [#8](https://github.com/symphonists/url_router/issues/8) When dealing with external URL's, strip the trailing slash that Symphony always adds to routes
+		</release>
 		<release version="2.0.3" date="2013-01-02" min="2.3" max="2.3">
 			* Bug fix for adding querystring parameters to the GET array, unless external
 		</release>
@@ -24,7 +30,7 @@
 		<release version="2.0.1" date="2012-07-13" min="2.3" max="2.3">
 			* Bug fix for Symphony hosted in a subfolder. Thanks Nils Hoerrmann.
 		</release>
-		<release version="2" date="2012-06-05" min="2.3">
+		<release version="2.0" date="2012-06-05" min="2.3">
 			* Major release includes updates for 2.3
 			* Moved Routes onto separate page under Blueprints (Nils Werner, John Porter)
 			* Removed the update functionality as is a breaking release
