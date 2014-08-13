@@ -14,7 +14,7 @@
 						`type` enum('route','redirect') DEFAULT 'route',
 						`http301` enum('yes','no') DEFAULT 'no',
 						PRIMARY KEY (`id`)
-					)
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 			");
 		}
 
@@ -30,7 +30,7 @@
 
 		public function uninstall()
 		{
-			Symphony::Database()->query("DROP TABLE `tbl_url_router`");
+			return Symphony::Database()->query("DROP TABLE `tbl_url_router`");
 		}
 
 		public function getSubscribedDelegates()
@@ -65,7 +65,10 @@
 				$new  = '/'. str_replace('/', "\/", $new);
 				$new .= '/i';
 
-				$to = '/'. trim($route['to'], '/');
+				$to = $this->isExternal($route['to'])
+					? $route['to']
+					: '/'. trim($route['to'], '/');
+
 				foreach ($names as $k => $n)
 					$to = str_replace($n, '$'. ($k +1), $to);
 
@@ -102,7 +105,13 @@
 
 					$route['original'] = $path;
 
-					$route['external'] = $this->isExternal($route['to']);
+					if($this->isExternal($route['to'])) {
+						$route['external'] = true;
+						$route['routed'] = rtrim($route['routed'], '/');
+					}
+					else {
+						$route['external'] = false;
+					}
 
 					$return = $route;
 
@@ -207,7 +216,7 @@
 				$this->_hasrun = true;
 
 				// Used to check page resolution, would cause loop.
-				$frontend = FrontEnd::Page();
+				$frontend = Frontend::Page();
 
 				// Get route or empty array
 				$route = $this->getRoute($context['page']);
@@ -233,13 +242,17 @@
 					elseif($route['type'] == 'redirect' || $route['external'])
 					{
 						$context['page'] = $route['routed'];
+						$url = ($route['external'])
+							? $context['page']
+							: URL . $context['page'];
+
 						if($route['http301'] === 'yes')
 						{
-							header("Location:" . URL . $context['page'], true, 301);
+							header("Location:" . $url, true, 301);
 						}
 						else
 						{
-							header("Location:" . URL . $context['page']);
+							header("Location:" . $url);
 						}
 						die;
 					}
