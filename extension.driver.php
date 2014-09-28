@@ -147,9 +147,9 @@
 						$_GET[$bits[0]] = $bits[1];
 					}
 				}
-
-				return $return;
 			}
+
+			return $return;
 		}
 
 		/**
