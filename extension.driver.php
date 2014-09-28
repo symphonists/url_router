@@ -230,8 +230,8 @@
 				{
 					// If it is not an external route
 					if ($route['type'] == 'route' && $route['external'] === false) {
-						// If the page can resolve and the route says to force
-						if(!empty($page_can_resolve) && $route['http301'] == 'yes')
+						// If the page can resolve
+						if(!empty($page_can_resolve))
 						{
 							$route['routed'] = $this->filterGetParams($route['routed']);
 							$context['page'] = $route['routed'];
@@ -258,7 +258,7 @@
 						{
 							header("Location:" . $url);
 						}
-						die;
+						exit;
 					}
 				}
 				else

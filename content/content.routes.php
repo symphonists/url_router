@@ -92,14 +92,6 @@
 			$regroup->appendChild($label);
 			$recontent->appendChild($regroup);
 
-			$divgroup = new XMLElement('div');
-			$divgroup->setAttribute('class', 'group');
-			$label = Widget::Label();
-			$input = Widget::Input('settings[url-router][routes][][http301]', 'yes', 'checkbox');
-			$label->setValue($input->generate() . ' ' . __('Force re-route even if page exists'));
-			$divgroup->appendChild($label);
-			$divcontent->appendChild($divgroup);
-
 			$li_re->appendChild($recontent);
 			$li_ro->appendChild($divcontent);
 
@@ -163,21 +155,6 @@
 							$label->setValue($input->generate() . ' ' . __('Send an HTTP 301 Redirect'));
 							$regroup->appendChild($label);
 							$divcontent->appendChild($regroup);
-						}
-						else
-						{
-							$divgroup = new XMLElement('div');
-							$divgroup->setAttribute('class', 'group');
-
-							$label = Widget::Label();
-							$input = Widget::Input('settings[url-router][routes][][http301]', 'yes', 'checkbox');
-							if($route['http301'] == 'yes')
-							{
-								$input->setAttribute('checked', 'checked');
-							}
-							$label->setValue($input->generate() . ' ' . __('Force re-route even if page exists'));
-							$divgroup->appendChild($label);
-							$divcontent->appendChild($divgroup);
 						}
 						$li->appendChild($divcontent);
 						$ol->appendChild($li);
