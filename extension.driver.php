@@ -228,21 +228,23 @@
 
 				if(!empty($route))
 				{
-					// If the page can resolve, but is route and isn't external and the route says to force
-					if(!empty($page_can_resolve) && $route['type'] == 'route' && $route['external'] === false && $route['http301'] == 'yes')
-					{
-						$route['routed'] = $this->filterGetParams($route['routed']);
-						$context['page'] = $route['routed'];
+					// If it is not an external route
+					if ($route['type'] == 'route' && $route['external'] === false) {
+						// If the page can resolve and the route says to force
+						if(!empty($page_can_resolve) && $route['http301'] == 'yes')
+						{
+							$route['routed'] = $this->filterGetParams($route['routed']);
+							$context['page'] = $route['routed'];
+						}
+						// If the page can't resolve
+						elseif(empty($page_can_resolve))
+						{
+							$route['routed'] = $this->filterGetParams($route['routed']);
+							$context['page'] = $route['routed'];
+						}
 					}
-					// If the page can't resolve, and is route and isn't external
-					elseif(empty($page_can_resolve) && $route['type'] == 'route' && $route['external'] === false)
-					{
-						$route['routed'] = $this->filterGetParams($route['routed']);
-						$context['page'] = $route['routed'];
-					}
-					// If is redirect
-					elseif($route['type'] == 'redirect' || $route['external'])
-					{
+					// If is redirect or an external route
+					elseif($route['type'] == 'redirect' || $route['external']) {
 						$context['page'] = $route['routed'];
 						$url = ($route['external'])
 							? $context['page']
@@ -261,7 +263,7 @@
 				}
 				else
 				{
-					$index = $this->__getIndexPage();
+					$index = PageManager::fetchPageByType('index');
 
 					if(!$page_can_resolve)
 					{
@@ -270,15 +272,5 @@
 				}
 				unset($frontend, $route, $page_can_resolve);
 			}
-		}
-
-		private function __getIndexPage()
-		{
-			return Symphony::Database()->fetchRow(0, "
-				SELECT `tbl_pages`.* FROM `tbl_pages`, `tbl_pages_types`
-				WHERE `tbl_pages_types`.page_id = `tbl_pages`.id
-				AND tbl_pages_types.`type` = 'index'
-				LIMIT 1
-			");
 		}
 	}
