@@ -129,7 +129,7 @@
 		/**
 		 * Filter out any params that are in the 'to' route as a querystring, unless the route contains 'http://'
 		 * @param  String $route The 'to' route as a string
-		 * @return String        the filtered string, or full string if it contains 'http://'
+		 * @return String		 the filtered string, or full string if it contains 'http://'
 		 */
 		public function filterGetParams($route) {
 			$return = $route;
@@ -230,15 +230,24 @@
 				{
 					// If it is not an external route
 					if ($route['type'] == 'route' && $route['external'] === false) {
-						// If the page can resolve
-						if(!empty($page_can_resolve))
-						{
-							$route['routed'] = $this->filterGetParams($route['routed']);
-							$context['page'] = $route['routed'];
+						// Check to see what has already resolved.
+						if (isset($page_can_resolve['filelocation'])) {
+							// Remove the PAGES path, .xsl and replace any _ with /.
+							// Basically reconstruct the 'path' as if it was a URL request
+							$resolved_path = '/' . str_replace(
+								array(PAGES . '/', '.xsl', '_'),
+								array('', '',  '/'),
+								$page_can_resolve['filelocation']
+							) . '/';
+
+							// Now does the page we're routing from already exist in Symphony? No? Redirect.
+							if (preg_match('~^' . preg_quote($resolved_path) . '~i', $route['original']) == false) {
+								$route['routed'] = $this->filterGetParams($route['routed']);
+								$context['page'] = $route['routed'];
+							}
 						}
-						// If the page can't resolve
-						elseif(empty($page_can_resolve))
-						{
+						// Nothing exists in Symphony, redirect.
+						else {
 							$route['routed'] = $this->filterGetParams($route['routed']);
 							$context['page'] = $route['routed'];
 						}
