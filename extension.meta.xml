@@ -15,6 +15,11 @@
 		</author>
 	</authors>
 	<releases>
+		<release version="3.1" date="2014-10-29" min="2.4" max="2.5.x">
+			* [#20](https://github.com/symphonists/url_router/issues/20) Fix routing on Symphony 2.4+
+			* Use `PageManager` instead of internal functions
+			* Ensure routes are returned when GET parameters are omitted
+		</release>
 		<release version="3.0" date="2014-08-13" min="2.4" max="2.5.x">
 			* Symphony 2.4+ support
 			* [#18](https://github.com/symphonists/url_router/issues/18) Add success message when saving routes
