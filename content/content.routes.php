@@ -79,7 +79,6 @@
 			$divgroup->appendChild($labelto);
 
 			$divcontent = new XMLElement('div');
-			$divcontent->setAttribute('class', 'content');
 			$divcontent->appendChild($divgroup);
 
 			$recontent = clone $divcontent;
@@ -168,10 +167,25 @@
 
 			$this->Form->appendChild($fieldset);
 
+			$this->Header->setAttribute('class', 'spaced-bottom');
+	        $this->Context->setAttribute('class', 'spaced-right');
+	        $this->Contents->setAttribute('class', 'centered-content');
 			$div = new XMLElement('div');
 			$div->setAttribute('class', 'actions');
 
-			$div->appendChild(Widget::Input('action[save]', __('Save Changes'), 'submit', array('accesskey' => 's')));
+			$div->appendChild(
+				Widget::SVGIconContainer(
+					'save',
+					Widget::Input(
+						'action[save]',
+						__('Save Changes'),
+						'submit',
+						array('accesskey' => 's')
+					)
+				)
+			);
+
+			$div->appendChild(Widget::SVGIcon('chevron'));
 
 			$this->Form->appendChild($div);
 
