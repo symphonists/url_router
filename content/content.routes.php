@@ -108,9 +108,9 @@
 
 						$header = new XMLElement('header');
 						$header->appendChild(new XMLElement('h4', $route['type'] == 'redirect' ?  __('Redirect') : __('Route') ));
-						$header->appendChild(new XMLElement('span', __('From'), array('class' => 'type')));
-						$header->appendChild(new XMLElement('span', $from, array('class' => 'type')));
-						$header->appendChild(new XMLElement('span', __('To'), array('class' => 'type')));
+						$header->appendChild(new XMLElement('span', __('From') . '&nbsp;', array('class' => 'type')));
+						$header->appendChild(new XMLElement('span', $from . '&nbsp;', array('class' => 'type')));
+						$header->appendChild(new XMLElement('span', __('To') . '&nbsp;', array('class' => 'type')));
 						$header->appendChild(new XMLElement('span', $to, array('class' => 'type')));
 
 						$hidden = Widget::Input("settings[url-router][routes][][type]", $route['type'], 'hidden');
@@ -121,7 +121,6 @@
 						$li->appendChild($hidden);
 
 						$divcontent = new XMLElement('div');
-						$divcontent->setAttribute('class', 'content');
 
 						$divgroup = new XMLElement('div');
 						$divgroup->setAttribute('class', 'group');

@@ -207,7 +207,7 @@
 				unset($_POST['settings']['url-router']['routes']);
 			}
 
-			redirect(SYMPHONY_URL . '/extension/url_router/routes/index/saved/');
+			redirect(SYMPHONY_URL . '/extension/url_router/routes/');
 		}
 
 		public function frontendPrePageResolve($context)
