@@ -8,11 +8,11 @@
 		{
 			Symphony::Database()->query("
 					CREATE TABLE IF NOT EXISTS `tbl_url_router` (
-						`id` int(11) NOT NULL auto_increment,
-						`from` varchar(255) NOT NULL,
-						`to` varchar(255) NOT NULL,
-						`type` enum('route','redirect') DEFAULT 'route',
-						`http301` enum('yes','no') DEFAULT 'no',
+						`id` INT(11) NOT NULL AUTO_INCREMENT,
+						`from` VARCHAR(255) NOT NULL,
+						`to` VARCHAR(255) NOT NULL,
+						`type` ENUM('route','redirect') DEFAULT 'route',
+						`http301` ENUM('yes','no') DEFAULT 'no',
 						PRIMARY KEY (`id`)
 					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 			");
