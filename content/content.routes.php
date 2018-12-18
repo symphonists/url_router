@@ -79,7 +79,6 @@
 			$divgroup->appendChild($labelto);
 
 			$divcontent = new XMLElement('div');
-			$divcontent->setAttribute('class', 'content');
 			$divcontent->appendChild($divgroup);
 
 			$recontent = clone $divcontent;
@@ -109,9 +108,9 @@
 
 						$header = new XMLElement('header');
 						$header->appendChild(new XMLElement('h4', $route['type'] == 'redirect' ?  __('Redirect') : __('Route') ));
-						$header->appendChild(new XMLElement('span', __('From'), array('class' => 'type')));
-						$header->appendChild(new XMLElement('span', $from, array('class' => 'type')));
-						$header->appendChild(new XMLElement('span', __('To'), array('class' => 'type')));
+						$header->appendChild(new XMLElement('span', __('From') . '&nbsp;', array('class' => 'type')));
+						$header->appendChild(new XMLElement('span', $from . '&nbsp;', array('class' => 'type')));
+						$header->appendChild(new XMLElement('span', __('To') . '&nbsp;', array('class' => 'type')));
 						$header->appendChild(new XMLElement('span', $to, array('class' => 'type')));
 
 						$hidden = Widget::Input("settings[url-router][routes][][type]", $route['type'], 'hidden');
@@ -122,7 +121,6 @@
 						$li->appendChild($hidden);
 
 						$divcontent = new XMLElement('div');
-						$divcontent->setAttribute('class', 'content');
 
 						$divgroup = new XMLElement('div');
 						$divgroup->setAttribute('class', 'group');
@@ -168,10 +166,25 @@
 
 			$this->Form->appendChild($fieldset);
 
+			$this->Header->setAttribute('class', 'spaced-bottom');
+			$this->Context->setAttribute('class', 'spaced-right');
+			$this->Contents->setAttribute('class', 'centered-content');
 			$div = new XMLElement('div');
 			$div->setAttribute('class', 'actions');
 
-			$div->appendChild(Widget::Input('action[save]', __('Save Changes'), 'submit', array('accesskey' => 's')));
+			$div->appendChild(
+				Widget::SVGIconContainer(
+					'save',
+					Widget::Input(
+						'action[save]',
+						__('Save Changes'),
+						'submit',
+						array('accesskey' => 's')
+					)
+				)
+			);
+
+			$div->appendChild(Widget::SVGIcon('chevron'));
 
 			$this->Form->appendChild($div);
 

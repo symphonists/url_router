@@ -15,6 +15,10 @@
 		</author>
 	</authors>
 	<releases>
+		<release version="4.0.0" date="TBA" min="4.0.0" max="4.x.x" php-min="5.6.x" php-max="7.x.x">
+			* Update for Symphony 4.x
+			* Code refactoring for Database and EQFA
+		</release>
 		<release version="3.1" date="2014-10-29" min="2.4" max="2.5.x">
 			* [#20](https://github.com/symphonists/url_router/issues/20) Fix routing on Symphony 2.4+
 			* Use `PageManager` instead of internal functions

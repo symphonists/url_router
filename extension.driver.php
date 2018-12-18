@@ -6,16 +6,32 @@
 
 		public function install()
 		{
-			Symphony::Database()->query("
-					CREATE TABLE IF NOT EXISTS `tbl_url_router` (
-						`id` int(11) NOT NULL auto_increment,
-						`from` varchar(255) NOT NULL,
-						`to` varchar(255) NOT NULL,
-						`type` enum('route','redirect') DEFAULT 'route',
-						`http301` enum('yes','no') DEFAULT 'no',
-						PRIMARY KEY (`id`)
-					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-			");
+			return Symphony::Database()
+				->create('tbl_url_router')
+				->ifNotExists()
+				->fields([
+					'id' => [
+						'type' => 'int(11)',
+						'auto' => true,
+					],
+					'from' => 'varchar(255)',
+					'to' => 'varchar(255)',
+					'type' => [
+						'type' => 'enum',
+						'values' => ['route','redirect'],
+						'default' => 'route',
+					],
+					'http301' => [
+						'type' => 'enum',
+						'values' => ['yes','no'],
+						'default' => 'no',
+					],
+				])
+				->keys([
+					'id' => 'primary',
+				])
+				->execute()
+				->success();
 		}
 
 		public function fetchNavigation() {
@@ -30,7 +46,11 @@
 
 		public function uninstall()
 		{
-			return Symphony::Database()->query("DROP TABLE `tbl_url_router`");
+			return Symphony::Database()
+				->drop('tbl_url_router')
+				->ifExists()
+				->execute()
+				->success();
 		}
 
 		public function getSubscribedDelegates()
@@ -51,7 +71,11 @@
 		 */
 		public function getRoutes()
 		{
-			$routes = Symphony::Database()->fetch("SELECT * FROM tbl_url_router");
+			$routes = Symphony::Database()
+				->select(['*'])
+				->from('tbl_url_router')
+				->execute()
+				->rows();
 
 			foreach ($routes as $i => $route)
 			{
@@ -200,14 +224,26 @@
 				}
 			}
 
-			Symphony::Database()->query("DELETE FROM tbl_url_router");
+			Symphony::Database()
+				->delete('tbl_url_router')
+				->all()
+				->finalize()
+				->execute()
+				->success();
 
 			if(count($routes) > 0) {
-				Symphony::Database()->insert($routes, "tbl_url_router");
+				foreach($routes as $route => $values) {
+					Symphony::Database()
+						->insert('tbl_url_router')
+						->values($values)
+						->execute()
+						->success();
+				}
+
 				unset($_POST['settings']['url-router']['routes']);
 			}
 
-			redirect(SYMPHONY_URL . '/extension/url_router/routes/index/saved/');
+			redirect(SYMPHONY_URL . '/extension/url_router/routes/');
 		}
 
 		public function frontendPrePageResolve($context)
