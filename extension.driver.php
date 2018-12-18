@@ -6,21 +6,9 @@
 
 		public function install()
 		{
-			// Symphony::Database()->query("
-			// 		CREATE TABLE IF NOT EXISTS `tbl_url_router` (
-			// 			`id` INT(11) NOT NULL AUTO_INCREMENT,
-			// 			`from` VARCHAR(255) NOT NULL,
-			// 			`to` VARCHAR(255) NOT NULL,
-			// 			`type` ENUM('route','redirect') DEFAULT 'route',
-			// 			`http301` ENUM('yes','no') DEFAULT 'no',
-			// 			PRIMARY KEY (`id`)
-			// 		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-			// ");
 			return Symphony::Database()
 				->create('tbl_url_router')
 				->ifNotExists()
-				->charset('utf8')
-				->collate('utf8_unicode_ci')
 				->fields([
 					'id' => [
 						'type' => 'int(11)',
@@ -58,7 +46,6 @@
 
 		public function uninstall()
 		{
-			// return Symphony::Database()->query("DROP TABLE `tbl_url_router`");
 			return Symphony::Database()
 				->drop('tbl_url_router')
 				->ifExists()
@@ -84,7 +71,6 @@
 		 */
 		public function getRoutes()
 		{
-			// $routes = Symphony::Database()->fetch("SELECT * FROM tbl_url_router");
 			$routes = Symphony::Database()
 				->select(['*'])
 				->from('tbl_url_router')
