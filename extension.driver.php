@@ -234,11 +234,11 @@
 						if (isset($page_can_resolve['filelocation'])) {
 							// Remove the PAGES path, .xsl and replace any _ with /.
 							// Basically reconstruct the 'path' as if it was a URL request
-							$resolved_path = '/' . str_replace(
+							$resolved_path = str_replace(
 								array(PAGES . '/', '.xsl', '_'),
 								array('', '',  '/'),
 								$page_can_resolve['filelocation']
-							) . '/';
+							);
 
 							// Now does the page we're routing from already exist in Symphony? No? Redirect.
 							if (preg_match('~^' . preg_quote($resolved_path) . '~i', $route['original']) == false) {
