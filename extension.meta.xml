@@ -15,6 +15,9 @@
 		</author>
 	</authors>
 	<releases>
+		<release version="3.2" date="2019-01-10" min="2.6" max="2.x.x">
+			* @jonmifsud’s [Fix for symphony 2.6.x](https://github.com/symphonists/url_router/pull/25)
+		</release>
 		<release version="3.1" date="2014-10-29" min="2.4" max="2.5.x">
 			* [#20](https://github.com/symphonists/url_router/issues/20) Fix routing on Symphony 2.4+
 			* Use `PageManager` instead of internal functions
