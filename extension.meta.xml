@@ -2,7 +2,7 @@
 <extension id="url_router" status="released" xmlns="http://getsymphony.com/schemas/extension/1.0">
 	<name>URL Router</name>
 	<description>Regex and Simplified Parameter based URL re-routing</description>
-	<repo type="github">https://github.com/symphonists/url_router</repo>
+	<repo type="github">https://github.com/animaux/url_router</repo>
 	<url type="discuss">http://getsymphony.com/discuss/thread/37320/</url>
 	<url type="issues">https://github.com/symphonists/url_router/issues</url>
 	<types>
@@ -15,6 +15,9 @@
 		</author>
 	</authors>
 	<releases>
+		<release version="3.2.1" date="2022-05-17" min="2.7.10" max="2.x.x">
+			* PHP 8.1 fix (may require PHP 7)
+		</release>
 		<release version="3.2" date="2019-01-10" min="2.6" max="2.x.x">
 			* @jonmifsud’s [Fix for symphony 2.6.x](https://github.com/symphonists/url_router/pull/25)
 		</release>

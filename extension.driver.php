@@ -273,7 +273,9 @@
 				else
 				{
 					$index = PageManager::fetchPageByType('index');
-
+          $index['handle'] = $index['handle'] ?? null;
+          
+          
 					if(!$page_can_resolve)
 					{
 						$context['page'] = "/" . $index['handle'] . $context['page'];
